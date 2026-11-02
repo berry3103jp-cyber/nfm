@@ -5,196 +5,513 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>NFM — nana Follow Manager</title>
 <style>
-:root{--bg:#f4f6fa;--panel:#fff;--ink:#202638;--muted:#6b7280;--line:#e2e6ef;--accent:#6558d3;--accent2:#eeeaff;--danger:#c83b54}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
-header{background:#24233a;color:#fff;padding:18px 22px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
-header h1{font-size:20px;margin:0}header small{color:#c9c7e6}.wrap{max-width:1250px;margin:20px auto;padding:0 16px}
-nav{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}.tab,button{border:1px solid var(--line);border-radius:9px;padding:9px 13px;background:#fff;color:var(--ink);cursor:pointer;font:inherit}.tab.active,button.primary{background:var(--accent);color:#fff;border-color:var(--accent)}button.danger{color:var(--danger)}button:disabled{opacity:.5;cursor:default}
-.panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:17px;margin-bottom:16px;box-shadow:0 3px 14px #26304a08}
-h2{font-size:17px;margin:0 0 13px}h3{font-size:15px;margin:0 0 10px}.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}.grid.two{grid-template-columns:repeat(2,minmax(0,1fr))}
-label{display:block;color:var(--muted);font-size:12px;margin-bottom:5px}input,select,textarea{width:100%;padding:9px 10px;border:1px solid #d8dce7;border-radius:8px;background:#fff;color:var(--ink);font:inherit}textarea{min-height:70px;resize:vertical}.checks{display:flex;gap:12px;align-items:center;flex-wrap:wrap}.checks label{display:flex;gap:6px;align-items:center;margin:0;font-size:13px}.checks input{width:auto}
-.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.stats{display:flex;gap:10px;flex-wrap:wrap}.stat{background:#f6f5ff;border-radius:10px;padding:10px 13px;min-width:120px}.stat b{font-size:20px;display:block}.stat span{font-size:12px;color:var(--muted)}
-.toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:end;margin-bottom:12px}.toolbar>div{min-width:170px;flex:1}.toolbar button{flex:0 0 auto}
-table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:10px 8px;border-bottom:1px solid var(--line);vertical-align:top}th{font-size:12px;color:var(--muted);white-space:nowrap}td .sub{font-size:12px;color:var(--muted)}.badge{display:inline-block;padding:2px 7px;background:#f0effb;border-radius:20px;font-size:11px;margin:2px}.fav{color:#d99b00}.pin{color:var(--accent)}.scroll{overflow:auto}
-.usercards{display:none}.usercard{border:1px solid var(--line);border-radius:11px;padding:12px;margin:8px 0}.usercard strong{font-size:15px}.usercard .cardmeta{color:var(--muted);font-size:12px;margin:5px 0}
-small.muted,.muted{color:var(--muted)}.hidden{display:none!important}.inline{display:inline-flex;gap:7px;align-items:center}.empty{text-align:center;color:var(--muted);padding:24px}
-dialog{border:0;border-radius:14px;padding:20px;max-width:600px;width:calc(100% - 24px);box-shadow:0 20px 70px #0003}dialog::backdrop{background:#11182777}.dialoghead{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
-.memo-tools{display:flex;gap:8px;flex-wrap:wrap;align-items:end;margin:7px 0}
-.memo-tools>div{flex:1;min-width:180px}
+:root{--bg:#f4f6fa;--panel:#fff;--ink:#202638;--muted:#6b7280;--line:#e2e6ef;--accent:#6558d3;--danger:#c83b54;--pink:#fde4ec;--pinkink:#a23a5a}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif}
+header{background:#24233a;color:#fff;padding:12px 18px}
+header h1{font-size:18px;margin:0}header small{color:#c9c7e6;font-weight:400;font-size:12px;margin-left:6px}
+.wrap{max-width:1250px;margin:14px auto;padding:0 14px}
+nav{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.tab,button{border:1px solid var(--line);border-radius:9px;padding:8px 12px;background:#fff;color:var(--ink);cursor:pointer;font:inherit}
+.tab.active,button.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+button.danger{color:var(--danger)}button.icon{padding:3px 7px;line-height:1.2}button:disabled{opacity:.5;cursor:default}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:12px;box-shadow:0 3px 14px #26304a08}
+h2{font-size:16px;margin:0 0 10px}
+.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}.grid.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+label{display:block;color:var(--muted);font-size:12px;margin-bottom:4px}
+input,select,textarea{width:100%;padding:8px 10px;border:1px solid #d8dce7;border-radius:8px;background:#fff;color:var(--ink);font:inherit}
+textarea{min-height:70px;resize:vertical}
+.checks{display:flex;gap:14px;align-items:center;flex-wrap:wrap;min-height:36px}
+.checks label{display:flex;gap:6px;align-items:center;margin:0;font-size:13px;color:var(--ink)}.checks input{width:auto}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.summary{display:flex;gap:20px;flex-wrap:wrap;align-items:baseline}.summary .sdate{color:var(--muted)}.summary b{font-size:20px;margin:0 3px}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:end;margin-bottom:10px}.toolbar>div{min-width:150px;flex:1}.toolbar button{flex:0 0 auto}
+table{width:100%;border-collapse:collapse}
+th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:middle}
+th{font-size:12px;color:var(--muted);white-space:nowrap}
+td.memocell{max-width:360px}td.ops,th.ops{white-space:nowrap;text-align:right}
+.clamp{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:12px;color:#444;word-break:break-word}
+.badge{display:inline-block;padding:1px 8px;background:#f0effb;border-radius:20px;font-size:11px;margin:1px 2px 1px 0}
+.badge.other{background:var(--pink);color:var(--pinkink)}
+.rel{display:inline-flex;gap:4px;align-items:center;margin:1px 10px 1px 0;white-space:nowrap}.rdate{font-size:11px;color:var(--muted)}
+.fav{color:#d99b00}.pin{color:var(--accent)}
+.usercards{display:none}
+.usercard{border:1px solid var(--line);border-radius:10px;padding:9px 11px;margin:7px 0}
+.cardhead{display:flex;gap:7px;align-items:baseline;flex-wrap:wrap}
+.cardmemo{display:flex;gap:8px;align-items:flex-start;margin-top:4px}.cardmemo .clamp{flex:1;min-width:0}
+.cardmeta{color:var(--muted);font-size:12px;margin:4px 0}
+.muted{color:var(--muted)}.small{font-size:12px}.hidden{display:none!important}.empty{text-align:center;color:var(--muted);padding:20px}
+a.nana{color:var(--accent);text-decoration:none}a.nana:hover{text-decoration:underline}
 .link-id{color:var(--accent);text-decoration:underline;text-decoration-style:dotted;cursor:pointer;font-weight:600}
-.draggable-id{cursor:grab;user-select:none}.relation-note{font-size:12px;color:var(--muted);margin:5px 0 9px}
+.draggable-id{cursor:grab;user-select:none;font-weight:600;color:var(--accent)}
+.memo-tools{display:flex;gap:8px;flex-wrap:wrap;align-items:end;margin:6px 0}.memo-tools>div{flex:1;min-width:180px}
+.relation-note{font-size:12px;color:var(--muted);margin:4px 0 8px}
+dialog{border:0;border-radius:14px;padding:20px;max-width:600px;width:calc(100% - 24px);box-shadow:0 20px 70px #0003}dialog::backdrop{background:#11182777}
+.dialoghead{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
 .detail-grid{display:grid;grid-template-columns:110px 1fr;gap:7px 12px}.detail-grid .key{color:var(--muted);font-size:12px}
-
-@media(max-width:800px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.scroll table{min-width:760px}.usercards{display:block}.desktopusers{display:none}}
-@media(max-width:480px){.grid,.grid.two{grid-template-columns:1fr}.wrap{padding:0 10px}.panel{padding:13px}}
+details.dm summary{cursor:pointer;font-weight:600}
+@media(max-width:800px){.grid,.grid.three{grid-template-columns:repeat(2,minmax(0,1fr))}.usercards{display:block}.desktopusers{display:none}}
+@media(max-width:480px){.grid,.grid.three{grid-template-columns:1fr}.wrap{padding:0 10px}.panel{padding:11px}}
 </style>
 </head>
 <body>
-<header><div><h1>NFM <small>nana Follow Manager</small></h1><small>フォロー・投稿・リアクションをまとめて管理</small></div><div class="inline"><button id="exportBtn">JSON保存</button><button id="csvBtn">CSV保存</button><label style="margin:0"><button onclick="document.getElementById('importFile').click()">読込</button><input id="importFile" type="file" accept=".json,.csv" hidden></label></div></header>
+<header><h1>NFM <small>nana Follow Manager</small></h1></header>
 <div class="wrap">
 <nav><button class="tab active" data-tab="users">ユーザー</button><button class="tab" data-tab="posts">投稿</button><button class="tab" data-tab="reactions">リアクション記録</button><button class="tab" data-tab="analysis">分析</button></nav>
+
+<!-- ===== ユーザー ===== -->
 <section id="users" class="view">
-<div class="panel"><h2>ユーザー登録・編集</h2><form id="userForm">
-<input type="hidden" id="editId">
+<div class="panel"><div class="summary" id="summary"></div></div>
+
+<div class="panel hidden" id="formPanel"><h2 id="formTitle">ユーザー追加</h2>
+<form id="userForm"><input type="hidden" id="editId">
 <div class="grid">
-<div><label>Nana ID（数値）</label><input id="nanaId" type="text" inputmode="numeric" placeholder="例：123456" required></div>
-<div><label>表示名</label><input id="displayName" placeholder="ユーザー名" required></div>
-<div><label>フォロー状態</label><div class="checks"><label><input type="checkbox" id="isFollowing">自分がフォロー</label><label><input type="checkbox" id="isFollower">相手がフォロー</label></div></div>
-<div><label>その他確認</label><div class="checks"><label><input type="checkbox" id="otherCheck">要確認</label><label><input type="checkbox" id="favorite">★お気に入り</label><label><input type="checkbox" id="pinned">📌ピン留め</label></div></div>
-</div><div style="margin-top:10px"><label>メモ（NFM IDをリンクできます）</label>
-<div class="memo-tools"><div><label>関連ユーザーを選択</label><select id="memoLinkUser"><option value="">ユーザーを選択…</option></select></div><button type="button" id="insertMemoLink">@IDを挿入</button></div>
-<div class="relation-note">選択して挿入、またはユーザー一覧のNFM IDをPCでドラッグ＆ドロップ。メモ内の @NFM-xxxx はクリックして詳細を開けます。</div>
-<textarea id="userMemo" placeholder="例：@NFM-0005 とつながりあり。&#10;@NFM-0012 の転生アカと思われる。"></textarea></div>
-<div class="actions"><button class="primary" type="submit">登録 / 更新</button><button type="button" id="cancelEdit">入力クリア</button></div></form></div>
-<div class="panel"><div class="stats" id="userStats"></div></div>
-<div class="panel"><h2>ユーザー一覧</h2><div class="toolbar">
-<div><label>検索</label><input id="userSearch" placeholder="表示名・Nana ID・NFM ID・メモ"></div>
-<div><label>表示対象</label><select id="userFilter"><option value="all">すべて</option><option value="following">自分がフォロー</option><option value="follower">相手がフォロー</option><option value="mutual">相互フォロー</option><option value="other">要確認</option><option value="favorite">お気に入り</option></select></div>
-<div><label>並び順</label><select id="userSort"><option value="new">登録順（新しい）</option><option value="old">登録順（古い）</option><option value="nanaAsc">Nana ID 昇順（古い順）</option><option value="nanaDesc">Nana ID 降順（新しい順）</option><option value="name">表示名</option></select></div>
-<button id="clearSearch">検索解除</button></div>
-<div class="scroll desktopusers"><table><thead><tr><th>NFM ID</th><th>Nana ID</th><th>表示名 / メモ</th><th>関係</th><th>操作</th></tr></thead><tbody id="userRows"></tbody></table></div><div class="usercards" id="userCards"></div><div id="userEmpty" class="empty hidden">ユーザーがいません。</div></div>
+<div><label>nana ID（数値）</label><input id="nanaId" type="text" inputmode="numeric" placeholder="例：123456" required></div>
+<div><label>ユーザー名</label><input id="displayName" placeholder="ユーザー名" required></div>
+<div><label>最終確認日（任意）</label><input id="lastChecked" type="date"></div>
+<div><label>マーク</label><div class="checks"><label><input type="checkbox" id="favorite">★お気に入り</label><label><input type="checkbox" id="pinned">📌ピン留め</label></div></div>
+</div>
+<div style="margin-top:10px"><label>関係性（複数選択可・未選択でも可）</label>
+<div class="checks"><label><input type="checkbox" id="isFollowing">フォロー（自分→相手）</label><label><input type="checkbox" id="isFollower">フォロワー（相手→自分）</label><label><input type="checkbox" id="otherCheck">その他</label></div></div>
+<div class="grid three" style="margin-top:8px">
+<div id="rowFollowDate" class="hidden"><label>フォローした日（任意）</label><input id="followDate" type="date"></div>
+<div id="rowFollowerDate" class="hidden"><label>フォローされた日（任意）</label><input id="followerDate" type="date"></div>
+</div>
+<div style="margin-top:10px"><label>備考（NFM管理番号をリンクできます）</label>
+<div class="memo-tools"><div><label>関連ユーザーを選択</label><select id="memoLinkUser"><option value="">ユーザーを選択…</option></select></div><button type="button" id="insertMemoLink">@NFM番号を挿入</button></div>
+<div class="relation-note">選択して挿入できます。PCでは一覧のNFM番号をここへドラッグ＆ドロップしても挿入できます。備考内の @NFM-xxxx はクリックで詳細を開きます。</div>
+<textarea id="userMemo" placeholder="例：@NFM-0005 とつながりあり。"></textarea></div>
+<div class="actions"><button class="primary" type="submit">保存</button><button type="button" id="cancelEdit">キャンセル</button></div>
+</form></div>
+
+<div class="panel"><div class="toolbar">
+<div style="flex:2"><label>検索</label><input id="userSearch" placeholder="ユーザー名・nana ID・NFM管理番号・備考"></div>
+<div><label>表示対象</label><select id="userFilter"><option value="all">すべて</option><option value="following">フォロー</option><option value="follower">フォロワー</option><option value="mutual">相互</option><option value="other">その他</option><option value="favorite">お気に入り</option></select></div>
+<div><label>並び順</label><select id="userSort"><option value="nfmAsc">NFM管理番号（昇順）</option><option value="nfmDesc">NFM管理番号（降順）</option><option value="nanaAsc">nana ID（古い順）</option><option value="nanaDesc">nana ID（新しい順）</option><option value="name">ユーザー名順</option></select></div>
+<button id="clearSearch">解除</button><button class="primary" id="addUserBtn">＋ ユーザー追加</button></div>
+<div class="desktopusers"><table><thead><tr><th>NFM番号</th><th>ユーザー名</th><th>nana ID</th><th>ステータス</th><th>備考</th><th class="ops">操作</th></tr></thead><tbody id="userRows"></tbody></table></div>
+<div class="usercards" id="userCards"></div><div id="userEmpty" class="empty hidden">ユーザーがいません。</div></div>
 </section>
+
+<!-- ===== 投稿 ===== -->
 <section id="posts" class="view hidden">
 <div class="panel"><h2>投稿登録・編集</h2><form id="postForm"><input id="postEditId" type="hidden"><div class="grid">
-<div><label>投稿日</label><input id="postDate" type="date" required></div><div><label>曲名</label><input id="songTitle" placeholder="曲名" required></div><div><label>アーティスト</label><input id="artist" placeholder="アーティスト"></div><div><label>タグ（カンマ区切り）</label><input id="postTags" placeholder="ネタ, コラボ, ケロケロ"></div>
+<div><label>投稿日</label><input id="postDate" type="date" required></div><div><label>曲名</label><input id="songTitle" placeholder="曲名" required></div><div><label>アーティスト</label><input id="artist" placeholder="アーティスト"></div><div><label>タグ（カンマ区切り）</label><input id="postTags" placeholder="ネタ, コラボ"></div>
 </div><div style="margin-top:10px"><label>メモ / URL</label><textarea id="postMemo"></textarea></div><div class="actions"><button class="primary" type="submit">投稿を登録 / 更新</button><button type="button" id="clearPost">入力クリア</button></div></form></div>
 <div class="panel"><h2>投稿一覧</h2><div class="toolbar"><div><label>検索</label><input id="postSearch" placeholder="曲名・アーティスト・タグ"></div><div><label>並び順</label><select id="postSort"><option value="new">投稿日（新しい）</option><option value="old">投稿日（古い）</option></select></div></div><div id="postList"></div></div>
 </section>
+
+<!-- ===== リアクション ===== -->
 <section id="reactions" class="view hidden">
-<div class="panel"><h2>リアクションを記録</h2><form id="reactionForm"><div class="grid">
-<div><label>対象投稿</label><select id="reactionPost" required></select></div><div><label>相手ユーザー</label><select id="reactionUser" required></select></div><div><label>記録日</label><input id="reactionDate" type="date" required></div><div><label>リアクション</label><select id="reactionType"><option>拍手</option><option>クラップバースト</option><option>コメント</option><option>ギフト</option><option>プレリス追加</option></select></div>
-</div><div style="margin-top:10px"><label>内容（コメント本文など）</label><textarea id="reactionMemo"></textarea></div><div class="actions"><button class="primary" type="submit">記録する</button></div></form></div>
+<div class="panel"><h2 id="reactionFormTitle">リアクションを記録</h2><form id="reactionForm"><input id="reactionEditId" type="hidden"><div class="grid three">
+<div><label>対象投稿</label><select id="reactionPost" required></select></div><div><label>相手ユーザー</label><select id="reactionUser" required></select></div><div><label>リアクションをもらった日</label><input id="reactionDate" type="date" required></div>
+</div>
+<div style="margin-top:10px"><label>もらったリアクション（複数選択可）</label>
+<div class="checks"><label><input type="checkbox" id="rClap">拍手</label><label><input type="checkbox" id="rBurst">拍爆</label><label><input type="checkbox" id="rComment">コメント</label><label><input type="checkbox" id="rPlaylist">プレリス</label><label>ギフト <input id="rGift" type="number" min="0" step="1" placeholder="0" style="width:90px"> pt</label></div></div>
+<div style="margin-top:10px"><label>メモ（コメント本文など）</label><textarea id="reactionMemo"></textarea></div><div class="actions"><button class="primary" type="submit" id="reactionSubmit">記録する</button><button type="button" id="cancelReaction" class="hidden">編集をやめる</button></div></form></div>
 <div class="panel"><h2>記録一覧</h2><div class="toolbar"><div><label>ユーザー</label><select id="reactionFilterUser"><option value="">すべて</option></select></div><div><label>投稿</label><select id="reactionFilterPost"><option value="">すべて</option></select></div></div><div id="reactionList"></div></div>
 </section>
-<section id="analysis" class="view hidden"><div class="panel"><h2>リアクション分析</h2><p class="muted">投稿ごとの反応数と、ユーザー別の反応傾向を確認できます。記録済みデータをもとに集計します。</p><div id="analysisContent"></div></div></section>
+
+<section id="analysis" class="view hidden"><div class="panel"><h2>リアクション分析</h2><p class="muted">投稿ごとのスコア（反応の強さの合計）と内訳です。1回分のリアクションを配点で点数化しています。</p><div id="analysisContent"></div></div>
+<details class="panel"><summary style="cursor:pointer;font-weight:600">スコアの配点</summary>
+<p class="muted small">1回分のリアクションのスコア ＝ ONにした項目の配点の合計 ＋ ギフトpt × 1ptあたりの点。変更すると、過去の記録も含めてすぐ再計算されます。</p>
+<div class="grid three"><div><label>拍手</label><input id="wClap" type="number" min="0" step="0.1"></div><div><label>拍爆</label><input id="wBurst" type="number" min="0" step="0.1"></div><div><label>コメント</label><input id="wComment" type="number" min="0" step="0.1"></div><div><label>プレリス</label><input id="wPlaylist" type="number" min="0" step="0.1"></div><div><label>ギフト1ptあたり</label><input id="wGift" type="number" min="0" step="0.01"></div></div>
+<div class="actions"><button type="button" id="resetWeights">初期値に戻す</button></div></details></section>
+
+<details class="panel dm"><summary>データ管理（バックアップ・復元）</summary>
+<p class="muted small">データはこのブラウザに自動保存されます。端末の変更やブラウザのデータ削除に備えて、ときどきJSON保存を取ってください。読込の前には、現在のデータが自動で退避されます。</p>
+<div class="actions"><button id="exportBtn">JSON保存</button><button id="importJsonBtn">JSON読込</button><button id="csvBtn">ユーザーCSV保存</button><button id="importCsvBtn">ユーザーCSV読込</button></div>
+<input id="importJsonFile" type="file" accept=".json,application/json" hidden><input id="importCsvFile" type="file" accept=".csv,text/csv" hidden>
+</details>
 </div>
+
 <dialog id="userDetailDialog"><div class="dialoghead"><h2 id="detailTitle">ユーザー詳細</h2><button type="button" onclick="closeUserDetail()">閉じる</button></div><div id="detailBody"></div><div class="actions"><button type="button" class="primary" id="detailEditBtn">編集する</button></div></dialog>
+
 <script>
-const KEY='nfm_data_v2';
+const KEY='nfm_data_v2', SCHEMA=4;
+const DEFAULT_WEIGHTS={clap:1,burst:2,comment:3,playlist:4,giftPer:0.1};
+const TYPE_MAP={'クラップバースト':'拍爆','ギフト':'ギフト(pt)','ギフトpt':'ギフト(pt)','プレリス追加':'プレリス'};
+const NANA_URL=id=>'https://nana-music.com/users/'+encodeURIComponent(id);
+
+// ==PURE-START== （DOMに依存しない処理）
+const nfm=n=>'NFM-'+String(n).padStart(4,'0');
+function fresh(){return {schemaVersion:SCHEMA,users:[],posts:[],reactions:[],nextUser:1,nextPost:1,nextReaction:1,settings:{weights:Object.assign({},DEFAULT_WEIGHTS)}}}
+function normSettings(s){
+ const w=Object.assign({},DEFAULT_WEIGHTS,(s&&s.weights)||{});
+ for(const k in DEFAULT_WEIGHTS){const v=Number(w[k]);w[k]=Number.isFinite(v)&&v>=0?v:DEFAULT_WEIGHTS[k]}
+ return Object.assign({},s||{},{weights:w});
+}
+// リアクション：1回分＝1レコード（拍手・拍爆・コメント・プレリスはON/OFF、ギフトはpt数）
+const isLegacyR=r=>!('clap' in r||'burst' in r||'comment' in r||'playlist' in r||'gift' in r);
+function convReaction(r){
+ const base={id:Number(r.id),postId:Number(r.postId),userId:Number(r.userId),date:str(r.date),memo:str(r.memo)};
+ let f={clap:false,burst:false,comment:false,playlist:false,gift:0};
+ if(isLegacyR(r)){
+  const t=normType(r.type);
+  if(t==='拍手')f.clap=true;
+  else if(t==='拍爆')f.burst=true;
+  else if(t==='コメント')f.comment=true;
+  else if(t==='プレリス')f.playlist=true;
+  else if(t==='ギフト(pt)'){f.gift=Math.max(0,Number(r.points)||0);if(!f.gift)base.memo=base.memo?'ギフト（pt未入力）｜'+base.memo:'ギフト（pt未入力）'}
+  else if(t)base.memo=base.memo?`（${t}）｜`+base.memo:`（${t}）`;
+ }else f={clap:bool(r.clap),burst:bool(r.burst),comment:bool(r.comment),playlist:bool(r.playlist),gift:Math.max(0,Number(r.gift)||0)};
+ const out=Object.assign({},r,base,f);delete out.type;delete out.points;return out;
+}
+function migrateReactions(list){
+ const out=[],idx=new Map();
+ for(const r of (Array.isArray(list)?list:[])){
+  const legacy=isLegacyR(r),n=convReaction(r);
+  if(legacy){ // 旧形式は「同じ投稿×同じ人×同じ日」を1セットにまとめる
+   const k=n.postId+'|'+n.userId+'|'+n.date,e=idx.get(k);
+   if(e){['clap','burst','comment','playlist'].forEach(x=>{e[x]=e[x]||n[x]});e.gift+=n.gift;
+    if(n.memo&&!e.memo.split(' / ').includes(n.memo))e.memo=e.memo?e.memo+' / '+n.memo:n.memo;
+    e.id=Math.min(e.id,n.id);continue}
+   idx.set(k,n);
+  }
+  out.push(n);
+ }
+ return out;
+}
+function reactionScore(r,w){return (r.clap?w.clap:0)+(r.burst?w.burst:0)+(r.comment?w.comment:0)+(r.playlist?w.playlist:0)+(Number(r.gift)||0)*w.giftPer}
+function userFeedback(d,userId){
+ const by={};
+ for(const r of d.reactions){
+  if(r.userId!==userId)continue;const p=d.posts.find(x=>x.id===r.postId);if(!p)continue;
+  const o=by[p.id]??={p,score:0,count:0};o.score+=reactionScore(r,d.settings.weights);o.count++;
+ }
+ const posts=Object.values(by).sort((a,b)=>b.score-a.score||b.p.date.localeCompare(a.p.date));
+ return {posts,total:posts.reduce((t,x)=>t+x.score,0),count:posts.reduce((t,x)=>t+x.count,0)};
+}
+const str=v=>v==null?'':String(v);
+const bool=v=>v===true||/^(1|true|yes|y|○|はい)$/i.test(str(v).trim());
+const normType=t=>{t=str(t).trim();return TYPE_MAP[t]||t};
+function normDate(s){const m=str(s).trim().match(/^(\d{4})[-\/.](\d{1,2})[-\/.](\d{1,2})$/);return m?`${m[1]}-${m[2].padStart(2,'0')}-${m[3].padStart(2,'0')}`:''}
+const maxId=a=>a.reduce((m,x)=>Number.isFinite(x.id)&&x.id>m?x.id:m,0);
+function migrate(d){
+ const m=Object.assign(fresh(),d||{});
+ m.settings=normSettings(m.settings);
+ m.users=(Array.isArray(m.users)?m.users:[]).map(u=>Object.assign({},u,{
+  id:Number(u.id),nanaId:str(u.nanaId),name:str(u.name??u.displayName),
+  following:bool(u.following),follower:bool(u.follower),other:bool(u.other),favorite:bool(u.favorite),pinned:bool(u.pinned),
+  memo:str(u.memo),followDate:str(u.followDate),followerDate:str(u.followerDate),lastChecked:str(u.lastChecked)}));
+ m.posts=(Array.isArray(m.posts)?m.posts:[]).map(p=>Object.assign({},p,{
+  id:Number(p.id),date:str(p.date),title:str(p.title),artist:str(p.artist),memo:str(p.memo),
+  tags:Array.isArray(p.tags)?p.tags.map(str):str(p.tags).split(',').map(x=>x.trim()).filter(Boolean)}));
+ m.reactions=migrateReactions(m.reactions);
+ m.nextUser=Math.max(Number(m.nextUser)||1,maxId(m.users)+1);
+ m.nextPost=Math.max(Number(m.nextPost)||1,maxId(m.posts)+1);
+ m.nextReaction=Math.max(Number(m.nextReaction)||1,maxId(m.reactions)+1);
+ m.users.forEach(u=>{if(!Number.isFinite(u.id))u.id=m.nextUser++;u.nfmId=nfm(u.id)});
+ m.schemaVersion=SCHEMA;
+ return m;
+}
+function userByToken(users,tok){const n=parseInt(str(tok).replace(/\D/g,''),10);return users.find(u=>u.id===n)}
+function cmpNana(a,b){const x=Number(a),y=Number(b);return Number.isFinite(x)&&Number.isFinite(y)&&x!==y?x-y:String(a).localeCompare(String(b))}
+function parseCSV(text){
+ text=text.replace(/^\ufeff/,'');const rows=[];let row=[],f='',q=false;
+ for(let i=0;i<text.length;i++){const c=text[i];
+  if(q){if(c==='"'){if(text[i+1]==='"'){f+='"';i++}else q=false}else f+=c}
+  else if(c==='"')q=true;
+  else if(c===','){row.push(f);f=''}
+  else if(c==='\n'||c==='\r'){if(c==='\r'&&text[i+1]==='\n')i++;row.push(f);rows.push(row);row=[];f=''}
+  else f+=c}
+ if(f!==''||row.length){row.push(f);rows.push(row)}
+ return rows.filter(r=>r.some(x=>x!==''));
+}
+const CSV_HEAD=['NFM_ID','Nana_ID','ユーザー名','フォロー','フォロワー','その他','フォロー日','フォロワー日','最終確認日','お気に入り','ピン','備考'];
+const CSV_ALIAS={NFM_ID:'nfm',Nana_ID:'nana',ユーザー名:'name',表示名:'name',フォロー:'following',フォロワー:'follower',その他:'other',要確認:'other',フォロー日:'followDate',フォロワー日:'followerDate',最終確認日:'lastChecked',お気に入り:'favorite',ピン:'pinned',備考:'memo',メモ:'memo'};
+const csvq=v=>'"'+str(v).replace(/"/g,'""')+'"';
+function usersToCSV(users){
+ const b=v=>v?1:0;
+ const rows=[CSV_HEAD,...users.map(u=>[u.nfmId,u.nanaId,u.name,b(u.following),b(u.follower),b(u.other),u.followDate,u.followerDate,u.lastChecked,b(u.favorite),b(u.pinned),u.memo])];
+ return rows.map(r=>r.map(csvq).join(',')).join('\r\n');
+}
+function csvToRecords(text){
+ const rows=parseCSV(text);if(!rows.length)return {error:'CSVが空です'};
+ const cols=rows[0].map(h=>CSV_ALIAS[h.trim()]);
+ if(!cols.includes('nana'))return {error:'ヘッダーに Nana_ID 列がありません'};
+ return {recs:rows.slice(1).map(r=>{const o={};cols.forEach((k,i)=>{if(k)o[k]=r[i]??''});return o})};
+}
+function applyCSV(d,recs){
+ let add=0,upd=0,skip=0;
+ for(const r of recs){
+  const nana=str(r.nana).trim();if(!/^\d+$/.test(nana)){skip++;continue}
+  const patch={};
+  if('name' in r)patch.name=str(r.name).trim();
+  ['following','follower','other','favorite','pinned'].forEach(k=>{if(k in r)patch[k]=bool(r[k])});
+  ['followDate','followerDate','lastChecked'].forEach(k=>{if(k in r)patch[k]=normDate(r[k])});
+  if('memo' in r)patch.memo=str(r.memo);
+  const u=d.users.find(x=>x.nanaId===nana);
+  if(u){Object.assign(u,patch);upd++;continue}
+  let id=NaN;const m=/(\d+)$/.exec(str(r.nfm));
+  if(m){const n=Number(m[1]);if(n>0&&!d.users.some(x=>x.id===n))id=n}
+  if(!Number.isFinite(id))id=d.nextUser;
+  d.nextUser=Math.max(d.nextUser,id+1);
+  d.users.push(Object.assign({id,nfmId:nfm(id),nanaId:nana,name:'',following:false,follower:false,other:false,favorite:false,pinned:false,memo:'',followDate:'',followerDate:'',lastChecked:'',createdAt:new Date().toISOString()},patch));
+  add++;
+ }
+ return {add,upd,skip};
+}
+// ==PURE-END==
+
 const $=id=>document.getElementById(id);
-const today=()=>new Date().toISOString().slice(0,10);
-let data=load();
-function fresh(){return {users:[],posts:[],reactions:[],nextUser:1,nextPost:1,nextReaction:1}}
-function load(){try{let d=JSON.parse(localStorage.getItem(KEY));return Object.assign(fresh(),d||{})}catch{return fresh()}}
-function save(){localStorage.setItem(KEY,JSON.stringify(data));render()}
+const pad=n=>String(n).padStart(2,'0');
+const today=()=>{const d=new Date();return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`};
+const stamp=()=>{const d=new Date();return today().replace(/-/g,'')+'-'+pad(d.getHours())+pad(d.getMinutes())+pad(d.getSeconds())};
+const fmtDate=d=>d?esc(d).replace(/-/g,'/'):'—';
 function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-function nfm(n){return 'NFM-'+String(n).padStart(4,'0')}
-function resetUserForm(){ $('userForm').reset();$('editId').value='';}
-function resetPostForm(){ $('postForm').reset();$('postEditId').value='';$('postDate').value=today()}
-function dateLabel(d){return d||'—'}
+let data,needsPersist=false;
 
+/* ---------- 保存・読込 ---------- */
+function load(){
+ let raw=null;try{raw=localStorage.getItem(KEY)}catch{}
+ if(!raw)return fresh();
+ let d;
+ try{d=JSON.parse(raw)}
+ catch{try{localStorage.setItem(KEY+'_corrupt_'+stamp(),raw)}catch{}
+  alert('保存データを読み込めませんでした。元のデータは別の保存枠に退避しました。');return fresh()}
+ if((d.schemaVersion||0)<SCHEMA){needsPersist=true;try{localStorage.setItem(KEY+'_backup_v'+(d.schemaVersion||0)+'_'+stamp(),raw)}catch{}}
+ return migrate(d);
+}
+function persist(){try{localStorage.setItem(KEY,JSON.stringify(data));return true}catch(e){alert('保存に失敗しました（容量不足の可能性）。「データ管理」からJSON保存を取ってください。');return false}}
+function save(){persist();render()}
+function backupCurrent(tag){try{localStorage.setItem(KEY+'_backup_'+tag,JSON.stringify(data))}catch{}}
+
+/* ---------- 共通表示 ---------- */
 function renderMemo(text){
  return esc(text).replace(/@?(NFM-\d{4,})/g,(match,id)=>{
-  const user=data.users.find(x=>x.nfmId===id);
-  if(!user)return match;
-  return `<span class="link-id" role="button" tabindex="0" onclick="openUserDetail(${user.id})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openUserDetail(${user.id})}" title="${esc(user.name)}の詳細">${match.startsWith('@')?'@':''}${id}</span>`;
+  const u=userByToken(data.users,id);if(!u)return match;
+  return `<span class="link-id" role="button" tabindex="0" onclick="openUserDetail(${u.id})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openUserDetail(${u.id})}" title="${esc(u.name)}の詳細">${match}</span>`;
  });
 }
-function refreshMemoLinkOptions(){
- const select=$('memoLinkUser'),current=select.value;
- select.innerHTML='<option value="">ユーザーを選択…</option>'+data.users.slice().sort((a,b)=>a.id-b.id).map(u=>`<option value="${u.id}">${u.nfmId} — ${esc(u.name)}</option>`).join('');
- if(data.users.some(u=>String(u.id)===current))select.value=current;
+function relHTML(u){
+ const a=[];
+ if(u.following)a.push(`<span class="rel"><span class="badge">フォロー</span><span class="rdate">${fmtDate(u.followDate)}</span></span>`);
+ if(u.follower)a.push(`<span class="rel"><span class="badge">フォロワー</span><span class="rdate">${fmtDate(u.followerDate)}</span></span>`);
+ if(u.other)a.push(`<span class="rel"><span class="badge other">その他</span></span>`);
+ return a.length?a.join(''):'<span class="muted">—</span>';
 }
-$('insertMemoLink').onclick=()=>{
- const user=data.users.find(u=>u.id===Number($('memoLinkUser').value));
- if(!user){alert('関連ユーザーを選択してください');return}
- const t=$('userMemo'),start=t.selectionStart??t.value.length,end=t.selectionEnd??start;
- const before=t.value.slice(0,start),after=t.value.slice(end),token='@'+user.nfmId;
- const pre=before&&!/\s$/.test(before)?' ':'',post=after&&!/^\s/.test(after)?' ':'';
- t.value=before+pre+token+post+after;t.focus();
- const pos=(before+pre+token+post).length;t.setSelectionRange(pos,pos);
-};
-function dragNfmId(event,id){const u=data.users.find(x=>x.id===id);if(u){event.dataTransfer.setData('text/plain','@'+u.nfmId);event.dataTransfer.effectAllowed='copy'}}
-$('userMemo').addEventListener('dragover',e=>{e.preventDefault();e.dataTransfer.dropEffect='copy'});
-$('userMemo').addEventListener('drop',e=>{
- e.preventDefault();const token=e.dataTransfer.getData('text/plain');if(!/^@?NFM-\d{4,}$/.test(token))return;
- const t=e.currentTarget,start=t.selectionStart??t.value.length,end=t.selectionEnd??start,b=t.value.slice(0,start),a=t.value.slice(end);
- const value=token.startsWith('@')?token:'@'+token,pre=b&&!/\s$/.test(b)?' ':'',post=a&&!/^\s/.test(a)?' ':'';
- t.value=b+pre+value+post+a;t.focus();const pos=(b+pre+value+post).length;t.setSelectionRange(pos,pos);
-});
-function openUserDetail(id){
- const u=data.users.find(x=>x.id===id);if(!u)return;
- $('detailTitle').textContent=u.nfmId+' — '+u.name;
- const ids=[...String(u.memo||'').matchAll(/@?(NFM-\d{4,})/g)].map(m=>m[1]);
- const rel=[...new Set(ids)].map(n=>data.users.find(x=>x.nfmId===n)).filter(Boolean);
- $('detailBody').innerHTML=`<div class="detail-grid"><div class="key">Nana ID</div><div>${esc(u.nanaId)}</div><div class="key">フォロー状態</div><div>${u.following?'自分がフォロー ':''}${u.follower?'相手がフォロー ':''}${u.other?'要確認':''}</div><div class="key">メモ</div><div>${renderMemo(u.memo||'（メモなし）')}</div><div class="key">関連ユーザー</div><div>${rel.length?rel.map(v=>`<span class="link-id" onclick="openUserDetail(${v.id})">${v.nfmId} — ${esc(v.name)}</span>`).join('<br>'):'なし'}</div></div>`;
- $('detailEditBtn').onclick=()=>{closeUserDetail();editUser(id)};$('userDetailDialog').showModal();
-}
-function closeUserDetail(){$('userDetailDialog').close()}
+const nanaLink=u=>`<a class="nana" href="${esc(NANA_URL(u.nanaId))}" target="_blank" rel="noopener">${esc(u.nanaId)}</a>`;
+const opsHTML=u=>`<button class="icon" title="編集" aria-label="編集" onclick="openUserForm(${u.id})">✏️</button> <button class="icon danger" title="削除" aria-label="削除" onclick="deleteUser(${u.id})">🗑️</button>`;
+function setOptions(sel,html){const cur=sel.value;sel.innerHTML=html;if([...sel.options].some(o=>o.value===cur))sel.value=cur}
 
+/* ---------- タブ ---------- */
 document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{
-function renderMemo(text){
- return esc(text).replace(/@?(NFM-\d{4,})/g,(match,id)=>{
-  const user=data.users.find(x=>x.nfmId===id);
-  if(!user)return match;
-  return `<span class="link-id" role="button" tabindex="0" onclick="openUserDetail(${user.id})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openUserDetail(${user.id})}" title="${esc(user.name)}の詳細">${match.startsWith('@')?'@':''}${id}</span>`;
- });
+ document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x===b));
+ document.querySelectorAll('.view').forEach(x=>x.classList.toggle('hidden',x.id!==b.dataset.tab));
+});
+
+/* ---------- ユーザー ---------- */
+function renderSummary(){
+ const n=new Date();
+ $('summary').innerHTML=`<span class="sdate">${n.getFullYear()}年${n.getMonth()+1}月${n.getDate()}日現在</span><span>フォロワー <b>${data.users.filter(u=>u.follower).length}</b>人</span><span>フォロー <b>${data.users.filter(u=>u.following).length}</b>人</span>`;
+}
+function filteredUsers(){
+ const q=$('userSearch').value.trim().toLowerCase(),f=$('userFilter').value,s=$('userSort').value;
+ const cmp={nfmAsc:(x,y)=>x.id-y.id,nfmDesc:(x,y)=>y.id-x.id,nanaAsc:(x,y)=>cmpNana(x.nanaId,y.nanaId),nanaDesc:(x,y)=>cmpNana(y.nanaId,x.nanaId),name:(x,y)=>x.name.localeCompare(y.name,'ja')}[s];
+ return data.users
+  .filter(u=>`${u.nfmId} ${u.nanaId} ${u.name} ${u.memo}`.toLowerCase().includes(q))
+  .filter(u=>f==='all'||(f==='following'&&u.following)||(f==='follower'&&u.follower)||(f==='mutual'&&u.following&&u.follower)||(f==='other'&&u.other)||(f==='favorite'&&u.favorite))
+  .sort((x,y)=>(Number(y.pinned)-Number(x.pinned))||cmp(x,y));
+}
+function renderUsers(){
+ const a=filteredUsers();
+ $('userRows').innerHTML=a.map(u=>`<tr><td><span class="draggable-id" draggable="true" ondragstart="dragNfmId(event,${u.id})" onclick="openUserDetail(${u.id})" title="クリックで詳細 / PCではドラッグで備考に挿入">${u.nfmId}</span>${u.pinned?' <span class="pin">📌</span>':''}</td><td><b>${esc(u.name)}</b>${u.favorite?' <span class="fav">★</span>':''}</td><td>${nanaLink(u)}</td><td>${relHTML(u)}</td><td class="memocell"><div class="clamp">${renderMemo(u.memo)}</div></td><td class="ops">${opsHTML(u)}</td></tr>`).join('');
+ $('userCards').innerHTML=a.map(u=>`<div class="usercard"><div class="cardhead"><span class="draggable-id" onclick="openUserDetail(${u.id})">${u.nfmId}</span><strong>${esc(u.name)}</strong>${u.favorite?'<span class="fav">★</span>':''}${u.pinned?'<span class="pin">📌</span>':''}<span class="small">${nanaLink(u)}</span></div><div>${relHTML(u)}</div><div class="cardmemo"><div class="clamp">${renderMemo(u.memo)}</div><div class="ops">${opsHTML(u)}</div></div></div>`).join('');
+ $('userEmpty').classList.toggle('hidden',a.length>0);
 }
 function refreshMemoLinkOptions(){
- const select=$('memoLinkUser'),current=select.value;
- select.innerHTML='<option value="">ユーザーを選択…</option>'+data.users.slice().sort((a,b)=>a.id-b.id).map(u=>`<option value="${u.id}">${u.nfmId} — ${esc(u.name)}</option>`).join('');
- if(data.users.some(u=>String(u.id)===current))select.value=current;
+ const editId=Number($('editId').value)||0;
+ setOptions($('memoLinkUser'),'<option value="">ユーザーを選択…</option>'+data.users.filter(u=>u.id!==editId).slice().sort((a,b)=>a.id-b.id).map(u=>`<option value="${u.id}">${u.nfmId} — ${esc(u.name)}</option>`).join(''));
+}
+function syncDateRows(){$('rowFollowDate').classList.toggle('hidden',!$('isFollowing').checked);$('rowFollowerDate').classList.toggle('hidden',!$('isFollower').checked)}
+$('isFollowing').onchange=$('isFollower').onchange=syncDateRows;
+function openUserForm(id){
+ const u=id?data.users.find(x=>x.id===id):null;
+ $('userForm').reset();
+ $('editId').value=u?u.id:'';
+ $('formTitle').textContent=u?`ユーザー編集（${u.nfmId}）`:'ユーザー追加';
+ if(u){
+  $('nanaId').value=u.nanaId;$('displayName').value=u.name;$('lastChecked').value=u.lastChecked;
+  $('isFollowing').checked=u.following;$('isFollower').checked=u.follower;$('otherCheck').checked=u.other;
+  $('favorite').checked=u.favorite;$('pinned').checked=u.pinned;$('followDate').value=u.followDate;$('followerDate').value=u.followerDate;$('userMemo').value=u.memo;
+ }
+ syncDateRows();refreshMemoLinkOptions();
+ $('formPanel').classList.remove('hidden');
+ $('formPanel').scrollIntoView({behavior:'smooth',block:'start'});
+ $('nanaId').focus({preventScroll:true});
+}
+function closeUserForm(){$('userForm').reset();$('editId').value='';$('formPanel').classList.add('hidden');refreshMemoLinkOptions()}
+$('addUserBtn').onclick=()=>openUserForm(0);
+$('cancelEdit').onclick=closeUserForm;
+$('userForm').onsubmit=e=>{
+ e.preventDefault();
+ const id=Number($('editId').value)||0,nana=$('nanaId').value.trim();
+ if(!/^\d+$/.test(nana)){alert('nana IDは数字で入力してください');return}
+ if(data.users.some(u=>u.nanaId===nana&&u.id!==id)){alert('同じnana IDのユーザーが登録済みです');return}
+ const f={nanaId:nana,name:$('displayName').value.trim(),following:$('isFollowing').checked,follower:$('isFollower').checked,other:$('otherCheck').checked,
+  favorite:$('favorite').checked,pinned:$('pinned').checked,memo:$('userMemo').value,
+  followDate:$('followDate').value,followerDate:$('followerDate').value,lastChecked:$('lastChecked').value};
+ if(id){Object.assign(data.users.find(x=>x.id===id),f)}
+ else{const n=data.nextUser++;data.users.push(Object.assign({id:n,nfmId:nfm(n),createdAt:new Date().toISOString()},f))}
+ closeUserForm();save();
+};
+function deleteUser(id){
+ if(!confirm('ユーザーを削除しますか？関連するリアクション記録も削除されます。NFM番号は再利用されません。'))return;
+ data.users=data.users.filter(u=>u.id!==id);data.reactions=data.reactions.filter(r=>r.userId!==id);
+ if(Number($('editId').value)===id)closeUserForm();
+ save();
+}
+$('userSearch').oninput=renderUsers;$('userFilter').onchange=renderUsers;$('userSort').onchange=renderUsers;
+$('clearSearch').onclick=()=>{$('userSearch').value='';$('userFilter').value='all';renderUsers()};
+
+/* ---------- 備考への番号挿入（1回だけ登録） ---------- */
+function insertToken(token){
+ const t=$('userMemo'),start=t.selectionStart??t.value.length,end=t.selectionEnd??start;
+ const b=t.value.slice(0,start),a=t.value.slice(end),pre=b&&!/\s$/.test(b)?' ':'',post=a&&!/^\s/.test(a)?' ':'';
+ t.value=b+pre+token+post+a;t.focus();const pos=(b+pre+token+post).length;t.setSelectionRange(pos,pos);
 }
 $('insertMemoLink').onclick=()=>{
- const user=data.users.find(u=>u.id===Number($('memoLinkUser').value));
- if(!user){alert('関連ユーザーを選択してください');return}
- const t=$('userMemo'),start=t.selectionStart??t.value.length,end=t.selectionEnd??start;
- const before=t.value.slice(0,start),after=t.value.slice(end),token='@'+user.nfmId;
- const pre=before&&!/\s$/.test(before)?' ':'',post=after&&!/^\s/.test(after)?' ':'';
- t.value=before+pre+token+post+after;t.focus();
- const pos=(before+pre+token+post).length;t.setSelectionRange(pos,pos);
+ const u=data.users.find(x=>x.id===Number($('memoLinkUser').value));
+ if(!u){alert('関連ユーザーを選択してください');return}
+ insertToken('@'+u.nfmId);
 };
 function dragNfmId(event,id){const u=data.users.find(x=>x.id===id);if(u){event.dataTransfer.setData('text/plain','@'+u.nfmId);event.dataTransfer.effectAllowed='copy'}}
 $('userMemo').addEventListener('dragover',e=>{e.preventDefault();e.dataTransfer.dropEffect='copy'});
 $('userMemo').addEventListener('drop',e=>{
- e.preventDefault();const token=e.dataTransfer.getData('text/plain');if(!/^@?NFM-\d{4,}$/.test(token))return;
- const t=e.currentTarget,start=t.selectionStart??t.value.length,end=t.selectionEnd??start,b=t.value.slice(0,start),a=t.value.slice(end);
- const value=token.startsWith('@')?token:'@'+token,pre=b&&!/\s$/.test(b)?' ':'',post=a&&!/^\s/.test(a)?' ':'';
- t.value=b+pre+value+post+a;t.focus();const pos=(b+pre+value+post).length;t.setSelectionRange(pos,pos);
+ e.preventDefault();const tok=e.dataTransfer.getData('text/plain');
+ if(!/^@?NFM-\d{4,}$/.test(tok))return;
+ insertToken(tok.startsWith('@')?tok:'@'+tok);
 });
+
+/* ---------- 詳細ダイアログ ---------- */
 function openUserDetail(id){
  const u=data.users.find(x=>x.id===id);if(!u)return;
  $('detailTitle').textContent=u.nfmId+' — '+u.name;
- const ids=[...String(u.memo||'').matchAll(/@?(NFM-\d{4,})/g)].map(m=>m[1]);
- const rel=[...new Set(ids)].map(n=>data.users.find(x=>x.nfmId===n)).filter(Boolean);
- $('detailBody').innerHTML=`<div class="detail-grid"><div class="key">Nana ID</div><div>${esc(u.nanaId)}</div><div class="key">フォロー状態</div><div>${u.following?'自分がフォロー ':''}${u.follower?'相手がフォロー ':''}${u.other?'要確認':''}</div><div class="key">メモ</div><div>${renderMemo(u.memo||'（メモなし）')}</div><div class="key">関連ユーザー</div><div>${rel.length?rel.map(v=>`<span class="link-id" onclick="openUserDetail(${v.id})">${v.nfmId} — ${esc(v.name)}</span>`).join('<br>'):'なし'}</div></div>`;
- $('detailEditBtn').onclick=()=>{closeUserDetail();editUser(id)};$('userDetailDialog').showModal();
+ const rel=[],seen=new Set();
+ for(const m of u.memo.matchAll(/@?(NFM-\d{4,})/g)){const v=userByToken(data.users,m[1]);if(v&&!seen.has(v.id)){seen.add(v.id);rel.push(v)}}
+ const fb=userFeedback(data,u.id);
+ const fbRows=fb.posts.length
+  ?`<div class="key">最も刺さった曲</div><div><b>${esc(fb.posts[0].p.title)}</b> <span class="muted">（スコア ${fmtScore(fb.posts[0].score)}）</span></div><div class="key">反応の合計</div><div>累計スコア ${fmtScore(fb.total)} ／ ${fb.posts.length}曲に ${fb.count}回</div>${fb.posts.length>1?`<div class="key">曲別スコア上位</div><div>${fb.posts.slice(0,3).map(x=>`${esc(x.p.title)}（${fmtScore(x.score)}）`).join(' / ')}</div>`:''}`
+  :`<div class="key">最も刺さった曲</div><div class="muted">リアクション記録なし</div>`;
+ $('detailBody').innerHTML=`<div class="detail-grid"><div class="key">nana ID</div><div>${nanaLink(u)}</div><div class="key">ステータス</div><div>${relHTML(u)}</div><div class="key">最終確認日</div><div>${fmtDate(u.lastChecked)}</div><div class="key">備考</div><div>${u.memo?renderMemo(u.memo):'<span class="muted">（なし）</span>'}</div>${fbRows}<div class="key">関連ユーザー</div><div>${rel.length?rel.map(v=>`<span class="link-id" onclick="openUserDetail(${v.id})">${v.nfmId} — ${esc(v.name)}</span>`).join('<br>'):'なし'}</div></div>`;
+ $('detailEditBtn').onclick=()=>{closeUserDetail();openUserForm(id)};
+ if(!$('userDetailDialog').open)$('userDetailDialog').showModal();
 }
 function closeUserDetail(){$('userDetailDialog').close()}
 
-document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x===b));document.querySelectorAll('.view').forEach(x=>x.classList.toggle('hidden',x.id!==b.dataset.tab));});
-$('userForm').onsubmit=e=>{e.preventDefault();let id=$('editId').value, nana=$('nanaId').value.trim();if(!/^\d+$/.test(nana)){alert('Nana IDは数字で入力してください');return}
-let duplicate=data.users.find(u=>u.nanaId===nana&&u.id!==Number(id));if(duplicate){alert('同じNana IDのユーザーが登録済みです');return}
-let u={nanaId:nana,name:$('displayName').value.trim(),following:$('isFollowing').checked,follower:$('isFollower').checked,other:$('otherCheck').checked,favorite:$('favorite').checked,pinned:$('pinned').checked,memo:$('userMemo').value};
-if(id){Object.assign(data.users.find(x=>x.id===Number(id)),u)}else{u.id=data.nextUser++;u.nfmId=nfm(u.id);u.createdAt=new Date().toISOString();data.users.push(u)}resetUserForm();save()};
-$('cancelEdit').onclick=resetUserForm;
-$('userSearch').oninput=renderUsers;$('userFilter').onchange=renderUsers;$('userSort').onchange=renderUsers;$('clearSearch').onclick=()=>{$('userSearch').value='';$('userFilter').value='all';renderUsers()};
-function editUser(id){let u=data.users.find(x=>x.id===id);if(!u)return;$('editId').value=u.id;$('nanaId').value=u.nanaId;$('displayName').value=u.name;$('isFollowing').checked=u.following;$('isFollower').checked=u.follower;$('otherCheck').checked=u.other;$('favorite').checked=u.favorite;$('pinned').checked=u.pinned;$('userMemo').value=u.memo||'';window.scrollTo({top:0,behavior:'smooth'})}
-function deleteUser(id){if(!confirm('ユーザーを削除しますか？関連するリアクション記録も削除されます。NFM番号は再利用されません。'))return;data.users=data.users.filter(u=>u.id!==id);data.reactions=data.reactions.filter(r=>r.userId!==id);save()}
-function renderUsers(){let q=$('userSearch').value.toLowerCase(),f=$('userFilter').value,s=$('userSort').value;let a=data.users.filter(u=>(`${u.nfmId} ${u.nanaId} ${u.name} ${u.memo||''}`).toLowerCase().includes(q)).filter(u=>f==='all'||(f==='following'&&u.following)||(f==='follower'&&u.follower)||(f==='mutual'&&u.following&&u.follower)||(f==='other'&&u.other)||(f==='favorite'&&u.favorite));
-a.sort((x,y)=>y.pinned-x.pinned||(s==='new'?y.id-x.id:s==='old'?x.id-y.id:s==='nanaAsc'?Number(x.nanaId)-Number(y.nanaId):s==='nanaDesc'?Number(y.nanaId)-Number(x.nanaId):x.name.localeCompare(y.name,'ja')));
-$('userRows').innerHTML=a.map(u=>`<tr><td><span class="draggable-id" draggable="true" ondragstart="dragNfmId(event,${u.id})" onclick="openUserDetail(${u.id})" title="クリックで詳細 / PCではドラッグ">${u.nfmId}</span>${u.pinned?' <span class="pin">📌</span>':''}</td><td>${esc(u.nanaId)}</td><td><b>${esc(u.name)}</b>${u.favorite?' <span class="fav">★</span>':''}<div class="sub">${renderMemo(u.memo||'')}</div></td><td>${u.following?'<span class="badge">自分→相手</span>':''}${u.follower?'<span class="badge">相手→自分</span>':''}${u.other?'<span class="badge">要確認</span>':''}</td><td><button onclick="editUser(${u.id})">編集</button> <button class="danger" onclick="deleteUser(${u.id})">削除</button></td></tr>`).join('');
-$('userCards').innerHTML=a.map(u=>`<div class="usercard"><strong>${esc(u.name)} ${u.favorite?'★':''} ${u.pinned?'📌':''}</strong><div class="cardmeta">${u.nfmId} / Nana ID: ${esc(u.nanaId)}</div><div>${u.following?'自分がフォロー ':''}${u.follower?'相手がフォロー ':''}${u.other?'要確認':''}</div><div class="sub">${renderMemo(u.memo||'')}</div><div class="actions"><button onclick="editUser(${u.id})">編集</button><button class="danger" onclick="deleteUser(${u.id})">削除</button></div></div>`).join('');
-$('userEmpty').classList.toggle('hidden',a.length>0);$('userStats').innerHTML=[['登録数',data.users.length],['フォロー中',data.users.filter(u=>u.following).length],['フォロワー',data.users.filter(u=>u.follower).length],['相互',data.users.filter(u=>u.following&&u.follower).length]].map(x=>`<div class="stat"><b>${x[1]}</b><span>${x[0]}</span></div>`).join('')}
-$('postForm').onsubmit=e=>{e.preventDefault();let id=Number($('postEditId').value);let p={date:$('postDate').value,title:$('songTitle').value.trim(),artist:$('artist').value.trim(),tags:$('postTags').value.split(',').map(x=>x.trim()).filter(Boolean),memo:$('postMemo').value};if(id)Object.assign(data.posts.find(x=>x.id===id),p);else{p.id=data.nextPost++;data.posts.push(p)}resetPostForm();save()};
+/* ---------- 投稿 ---------- */
+function resetPostForm(){$('postForm').reset();$('postEditId').value='';$('postDate').value=today()}
+$('postForm').onsubmit=e=>{
+ e.preventDefault();const id=Number($('postEditId').value)||0;
+ const p={date:$('postDate').value,title:$('songTitle').value.trim(),artist:$('artist').value.trim(),tags:$('postTags').value.split(',').map(x=>x.trim()).filter(Boolean),memo:$('postMemo').value};
+ if(id)Object.assign(data.posts.find(x=>x.id===id),p);else{p.id=data.nextPost++;data.posts.push(p)}
+ resetPostForm();save();
+};
 $('clearPost').onclick=resetPostForm;
-function editPost(id){let p=data.posts.find(x=>x.id===id);$('postEditId').value=p.id;$('postDate').value=p.date;$('songTitle').value=p.title;$('artist').value=p.artist;$('postTags').value=p.tags.join(', ');$('postMemo').value=p.memo||'';window.scrollTo({top:0,behavior:'smooth'})}
+function editPost(id){const p=data.posts.find(x=>x.id===id);if(!p)return;$('postEditId').value=p.id;$('postDate').value=p.date;$('songTitle').value=p.title;$('artist').value=p.artist;$('postTags').value=p.tags.join(', ');$('postMemo').value=p.memo;window.scrollTo({top:0,behavior:'smooth'})}
 function deletePost(id){if(!confirm('投稿を削除しますか？関連リアクションも削除されます。'))return;data.posts=data.posts.filter(p=>p.id!==id);data.reactions=data.reactions.filter(r=>r.postId!==id);save()}
-function renderPosts(){let q=$('postSearch').value.toLowerCase(),s=$('postSort').value;let a=data.posts.filter(p=>(p.title+' '+p.artist+' '+p.tags.join(' ')).toLowerCase().includes(q));a.sort((x,y)=>s==='new'?y.date.localeCompare(x.date):x.date.localeCompare(y.date));$('postList').innerHTML=a.length?a.map(p=>`<div class="usercard"><strong>${esc(p.title)}</strong> — ${esc(p.artist)}<div class="cardmeta">${dateLabel(p.date)} ${p.tags.map(t=>`<span class="badge">${esc(t)}</span>`).join('')}</div><div>${esc(p.memo||'')}</div><div class="actions"><button onclick="editPost(${p.id})">編集</button><button class="danger" onclick="deletePost(${p.id})">削除</button></div></div>`).join():'<div class="empty">投稿がありません。</div>'}
+function renderPosts(){
+ const q=$('postSearch').value.toLowerCase(),s=$('postSort').value;
+ const a=data.posts.filter(p=>(p.title+' '+p.artist+' '+p.tags.join(' ')).toLowerCase().includes(q)).sort((x,y)=>s==='new'?y.date.localeCompare(x.date):x.date.localeCompare(y.date));
+ $('postList').innerHTML=a.length?a.map(p=>`<div class="usercard"><strong>${esc(p.title)}</strong> — ${esc(p.artist)}<div class="cardmeta">${fmtDate(p.date)} ${p.tags.map(t=>`<span class="badge">${esc(t)}</span>`).join('')}</div><div>${esc(p.memo)}</div><div class="actions"><button onclick="editPost(${p.id})">編集</button><button class="danger" onclick="deletePost(${p.id})">削除</button></div></div>`).join(''):'<div class="empty">投稿がありません。</div>';
+}
 $('postSearch').oninput=renderPosts;$('postSort').onchange=renderPosts;
-$('reactionDate').value=today();
-$('reactionForm').onsubmit=e=>{e.preventDefault();if(!data.posts.length||!data.users.length){alert('先にユーザーと投稿を登録してください');return}data.reactions.push({id:data.nextReaction++,postId:Number($('reactionPost').value),userId:Number($('reactionUser').value),date:$('reactionDate').value,type:$('reactionType').value,memo:$('reactionMemo').value});$('reactionMemo').value='';save()};
-$('reactionFilterUser').onchange=renderReactions;$('reactionFilterPost').onchange=renderReactions;
-function renderReactions(){let r=data.reactions.filter(x=>(!$('reactionFilterUser').value||x.userId===Number($('reactionFilterUser').value))&&(!$('reactionFilterPost').value||x.postId===Number($('reactionFilterPost').value))).sort((a,b)=>b.date.localeCompare(a.date));$('reactionList').innerHTML=r.length?r.map(x=>{let u=data.users.find(y=>y.id===x.userId),p=data.posts.find(y=>y.id===x.postId);return `<div class="usercard"><strong>${esc(u?.name||'削除済み')} × ${esc(p?.title||'削除済み')}</strong><div class="cardmeta">${esc(x.date)} · <span class="badge">${esc(x.type)}</span></div>${esc(x.memo||'')}<div class="actions"><button class="danger" onclick="deleteReaction(${x.id})">削除</button></div></div>`}).join():'<div class="empty">記録がありません。</div>'}
+
+/* ---------- リアクション ---------- */
+const RFLAGS=[['clap','rClap','拍手'],['burst','rBurst','拍爆'],['comment','rComment','コメント'],['playlist','rPlaylist','プレリス']];
+const fmtScore=x=>String(Math.round(x*10)/10);
+function resetReactionForm(){
+ $('reactionEditId').value='';$('reactionMemo').value='';$('rGift').value='';RFLAGS.forEach(f=>$(f[1]).checked=false);
+ $('reactionDate').value=today();$('reactionFormTitle').textContent='リアクションを記録';$('reactionSubmit').textContent='記録する';$('cancelReaction').classList.add('hidden');
+}
+$('cancelReaction').onclick=resetReactionForm;
+$('reactionForm').onsubmit=e=>{
+ e.preventDefault();
+ if(!data.posts.length||!data.users.length){alert('先にユーザーと投稿を登録してください');return}
+ const id=Number($('reactionEditId').value)||0;
+ const r={postId:Number($('reactionPost').value),userId:Number($('reactionUser').value),date:$('reactionDate').value,memo:$('reactionMemo').value,gift:Math.max(0,Math.floor(Number($('rGift').value)||0))};
+ RFLAGS.forEach(f=>r[f[0]]=$(f[1]).checked);
+ if(!r.clap&&!r.burst&&!r.comment&&!r.playlist&&!r.gift){alert('リアクションを1つ以上選んでください');return}
+ if(id)Object.assign(data.reactions.find(x=>x.id===id),r);else{r.id=data.nextReaction++;data.reactions.push(r)}
+ const keepDate=$('reactionDate').value;resetReactionForm();if(!id)$('reactionDate').value=keepDate; // 続けて入力しやすいよう日付は残す
+ save();
+};
+function editReaction(id){
+ const r=data.reactions.find(x=>x.id===id);if(!r)return;
+ $('reactionEditId').value=r.id;$('reactionPost').value=r.postId;$('reactionUser').value=r.userId;$('reactionDate').value=r.date;
+ RFLAGS.forEach(f=>$(f[1]).checked=!!r[f[0]]);$('rGift').value=r.gift||'';$('reactionMemo').value=r.memo;
+ $('reactionFormTitle').textContent='リアクションを編集';$('reactionSubmit').textContent='更新する';$('cancelReaction').classList.remove('hidden');
+ window.scrollTo({top:0,behavior:'smooth'});
+}
 function deleteReaction(id){if(confirm('この記録を削除しますか？')){data.reactions=data.reactions.filter(x=>x.id!==id);save()}}
-function fillSelects(){let users=data.users.slice().sort((a,b)=>a.name.localeCompare(b.name,'ja')),posts=data.posts.slice().sort((a,b)=>b.date.localeCompare(a.date));$('reactionUser').innerHTML=users.map(u=>`<option value="${u.id}">${esc(u.name)} (${u.nfmId})</option>`).join('');$('reactionPost').innerHTML=posts.map(p=>`<option value="${p.id}">${esc(p.date)} ${esc(p.title)}</option>`).join('');$('reactionFilterUser').innerHTML='<option value="">すべて</option>'+users.map(u=>`<option value="${u.id}">${esc(u.name)}</option>`).join('');$('reactionFilterPost').innerHTML='<option value="">すべて</option>'+posts.map(p=>`<option value="${p.id}">${esc(p.title)}</option>`).join('')}
-function renderAnalysis(){let counts={};data.reactions.forEach(r=>{let p=data.posts.find(p=>p.id===r.postId);if(!p)return;let k=p.id;counts[k]??={p,total:0,types:{}};counts[k].total++;counts[k].types[r.type]=(counts[k].types[r.type]||0)+1});let arr=Object.values(counts).sort((a,b)=>b.total-a.total);$('analysisContent').innerHTML=arr.length?arr.map(x=>`<div class="usercard"><strong>${esc(x.p.title)}</strong><div class="cardmeta">${x.p.date} · 記録 ${x.total}件</div>${Object.entries(x.types).map(([k,v])=>`<span class="badge">${esc(k)}：${v}</span>`).join('')}</div>`).join():'<div class="empty">リアクション記録が蓄積されると、ここに集計が表示されます。</div>'}
-function render(){renderUsers();renderPosts();fillSelects();refreshMemoLinkOptions();renderReactions();renderAnalysis()}
-$('exportBtn').onclick=()=>download('nfm-backup.json',JSON.stringify(data,null,2),'application/json');
-$('csvBtn').onclick=()=>{let rows=[['NFM_ID','Nana_ID','表示名','フォロー','フォロワー','要確認','お気に入り','ピン','メモ'],...data.users.map(u=>[u.nfmId,u.nanaId,u.name,u.following,u.follower,u.other,u.favorite,u.pinned,u.memo||''])];download('nfm-users.csv',rows.map(r=>r.map(csv).join(',')).join('\r\n'),'text/csv;charset=utf-8')};
-function csv(v){return '"'+String(v??'').replace(/"/g,'""')+'"'}
-function download(name,text,type){let a=document.createElement('a'),url=URL.createObjectURL(new Blob(['\ufeff',text],{type}));a.href=url;a.download=name;a.click();URL.revokeObjectURL(url)}
-$('importFile').onchange=async e=>{let f=e.target.files[0];if(!f)return;try{let text=await f.text();if(f.name.toLowerCase().endsWith('.json')){let d=JSON.parse(text);if(!d.users||!d.posts||!d.reactions)throw Error('NFM形式のJSONではありません');if(confirm('現在のデータを読み込んだ内容で置き換えますか？')){data=Object.assign(fresh(),d);save()}}else{alert('CSV取り込みはこの版ではユーザー一覧CSVの復元に未対応です。JSONバックアップをご利用ください。')}}catch(err){alert('読み込みに失敗しました：'+err.message)}e.target.value=''};
-resetPostForm();render();
+$('reactionFilterUser').onchange=renderReactions;$('reactionFilterPost').onchange=renderReactions;
+function renderReactions(){
+ const fu=$('reactionFilterUser').value,fp=$('reactionFilterPost').value,w=data.settings.weights;
+ const r=data.reactions.filter(x=>(!fu||x.userId===Number(fu))&&(!fp||x.postId===Number(fp))).sort((a,b)=>b.date.localeCompare(a.date)||b.id-a.id);
+ $('reactionList').innerHTML=r.length?r.map(x=>{
+  const u=data.users.find(y=>y.id===x.userId),p=data.posts.find(y=>y.id===x.postId);
+  const badges=RFLAGS.filter(f=>x[f[0]]).map(f=>`<span class="badge">${f[2]}</span>`).join('')+(x.gift?`<span class="badge">ギフト ${x.gift}pt</span>`:'');
+  return `<div class="usercard"><strong>${esc(u?.name||'削除済み')} × ${esc(p?.title||'削除済み')}</strong><div class="cardmeta">${fmtDate(x.date)} · ${badges} · <b>スコア ${fmtScore(reactionScore(x,w))}</b></div>${esc(x.memo)}<div class="actions"><button onclick="editReaction(${x.id})">編集</button><button class="danger" onclick="deleteReaction(${x.id})">削除</button></div></div>`}).join(''):'<div class="empty">記録がありません。</div>';
+}
+function fillSelects(){
+ const users=data.users.slice().sort((a,b)=>a.name.localeCompare(b.name,'ja')),posts=data.posts.slice().sort((a,b)=>b.date.localeCompare(a.date));
+ setOptions($('reactionUser'),users.map(u=>`<option value="${u.id}">${esc(u.name)} (${u.nfmId})</option>`).join(''));
+ setOptions($('reactionPost'),posts.map(p=>`<option value="${p.id}">${esc(p.date)} ${esc(p.title)}</option>`).join(''));
+ setOptions($('reactionFilterUser'),'<option value="">すべて</option>'+users.map(u=>`<option value="${u.id}">${esc(u.name)}</option>`).join(''));
+ setOptions($('reactionFilterPost'),'<option value="">すべて</option>'+posts.map(p=>`<option value="${p.id}">${esc(p.title)}</option>`).join(''));
+}
+
+/* ---------- 分析・スコア配点 ---------- */
+const WINPUTS=[['clap','wClap'],['burst','wBurst'],['comment','wComment'],['playlist','wPlaylist'],['giftPer','wGift']];
+function renderWeights(){WINPUTS.forEach(([k,id])=>{if(document.activeElement!==$(id))$(id).value=data.settings.weights[k]})}
+WINPUTS.forEach(([k,id])=>$(id).onchange=()=>{
+ const v=Number($(id).value);
+ if(!Number.isFinite(v)||v<0||$(id).value===''){alert('0以上の数値を入力してください');renderWeights();return}
+ data.settings.weights[k]=v;save();
+});
+$('resetWeights').onclick=()=>{data.settings.weights=Object.assign({},DEFAULT_WEIGHTS);save()};
+function renderAnalysis(){
+ const w=data.settings.weights,c={};
+ data.reactions.forEach(r=>{
+  const p=data.posts.find(p=>p.id===r.postId);if(!p)return;
+  const o=c[p.id]??={p,n:0,score:0,clap:0,burst:0,comment:0,playlist:0,gift:0,users:new Set()};
+  o.n++;o.users.add(r.userId);o.score+=reactionScore(r,w);RFLAGS.forEach(f=>{if(r[f[0]])o[f[0]]++});o.gift+=r.gift||0;
+ });
+ const arr=Object.values(c).sort((a,b)=>b.score-a.score);
+ $('analysisContent').innerHTML=arr.length?arr.map(x=>`<div class="usercard"><strong>${esc(x.p.title)}</strong> <b>スコア ${fmtScore(x.score)}</b><div class="cardmeta">${fmtDate(x.p.date)} · ${x.users.size}人から ${x.n}件</div>${RFLAGS.filter(f=>x[f[0]]).map(f=>`<span class="badge">${f[2]}：${x[f[0]]}</span>`).join('')}${x.gift?`<span class="badge">ギフト合計：${x.gift}pt</span>`:''}</div>`).join(''):'<div class="empty">リアクション記録が蓄積されると、ここに集計が表示されます。</div>';
+}
+
+/* ---------- データ管理 ---------- */
+function download(name,text,type,bom){const a=document.createElement('a'),url=URL.createObjectURL(new Blob(bom?['\ufeff',text]:[text],{type}));a.href=url;a.download=name;a.click();URL.revokeObjectURL(url)}
+$('exportBtn').onclick=()=>download(`nfm-backup-${stamp()}.json`,JSON.stringify(data,null,2),'application/json');
+$('csvBtn').onclick=()=>download(`nfm-users-${stamp()}.csv`,usersToCSV(data.users),'text/csv;charset=utf-8',true);
+$('importJsonBtn').onclick=()=>$('importJsonFile').click();
+$('importCsvBtn').onclick=()=>$('importCsvFile').click();
+$('importJsonFile').onchange=async e=>{
+ const f=e.target.files[0];e.target.value='';if(!f)return;
+ try{
+  const d=JSON.parse(await f.text());
+  if(!d||!Array.isArray(d.users))throw Error('NFM形式のJSONではありません');
+  const m=migrate(d);
+  if(!confirm(`現在のデータを、読み込んだ内容（ユーザー${m.users.length}件・投稿${m.posts.length}件・リアクション${m.reactions.length}件）で置き換えますか？\n現在のデータは自動で退避されます。`))return;
+  backupCurrent('before_import');data=m;save();
+ }catch(err){alert('読み込みに失敗しました：'+err.message)}
+};
+$('importCsvFile').onchange=async e=>{
+ const f=e.target.files[0];e.target.value='';if(!f)return;
+ try{
+  const r=csvToRecords(await f.text());if(r.error)throw Error(r.error);
+  const copy=JSON.parse(JSON.stringify(data)),res=applyCSV(copy,r.recs);
+  if(!confirm(`CSVを取り込みます。\n新規追加 ${res.add}件 / 更新 ${res.upd}件 / スキップ ${res.skip}件（nana IDが数字でない行）\n※ nana IDが一致するユーザーは、CSVの列の内容で上書きされます。\n現在のデータは自動で退避されます。`))return;
+  backupCurrent('before_csv_import');data=copy;save();
+ }catch(err){alert('読み込みに失敗しました：'+err.message)}
+};
+
+/* ---------- 初期化 ---------- */
+function render(){renderSummary();renderUsers();renderPosts();fillSelects();refreshMemoLinkOptions();renderReactions();renderWeights();renderAnalysis()}
+data=load();
+if(needsPersist)persist();
+resetPostForm();resetReactionForm();render();
 </script>
 </body></html>
