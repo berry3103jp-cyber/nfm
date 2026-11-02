@@ -1,1155 +1,200 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ja">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>NFM</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NFM — nana Follow Manager</title>
 <style>
-:root {
-  --bg:#f5f6fa; --panel:#fff; --text:#20242c; --muted:#727987;
-  --line:#e4e7ee; --primary:#5865d9; --primary-light:#eef0ff;
-  --green:#198754; --red:#c34d4d;
-}
-* { box-sizing:border-box; }
-body {
-  margin:0; background:var(--bg); color:var(--text);
-  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-}
-header {
-  background:#fff; border-bottom:1px solid var(--line);
-  padding:15px 20px; position:sticky; top:0; z-index:5;
-}
-.header-inner,.main { max-width:1100px; margin:auto; }
-.header-inner { display:flex; justify-content:space-between; align-items:center; gap:16px; }
-h1 { margin:0; font-size:22px; letter-spacing:1px; }
-.header-stats { display:flex; gap:14px; align-items:center; flex-wrap:wrap; justify-content:flex-end; }
-.stat { font-size:14px; font-weight:600; }
-.updated { font-size:12px; color:var(--muted); }
-nav { display:flex; gap:8px; margin-top:13px; }
-nav button {
-  border:0; background:transparent; color:var(--muted);
-  padding:9px 13px; border-radius:9px; cursor:pointer; font-weight:600;
-}
-nav button.active { background:var(--primary-light); color:var(--primary); }
-main { padding:22px 16px 48px; }
-.page { display:none; }
-.page.active { display:block; }
-.panel {
-  background:var(--panel); border:1px solid var(--line);
-  border-radius:14px; padding:18px; margin-bottom:16px;
-}
-.toolbar { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
-input,select,textarea {
-  font:inherit; border:1px solid #d8dce5; border-radius:9px;
-  padding:10px 11px; background:#fff; color:var(--text); min-width:0;
-}
-input:focus,select:focus,textarea:focus {
-  outline:2px solid #cdd1ff; border-color:var(--primary);
-}
-input[type="text"],input[type="date"],textarea { width:100%; }
-button {
-  font:inherit; cursor:pointer; border-radius:9px; padding:10px 13px;
-  border:1px solid var(--line); background:#fff; color:var(--text);
-}
-button.primary { background:var(--primary); color:#fff; border-color:var(--primary); }
-button.danger { color:var(--red); }
-button.small { padding:6px 9px; font-size:12px; }
-button:disabled { opacity:.5; cursor:not-allowed; }
-h2 { font-size:18px; margin:0 0 14px; }
-h3 { font-size:15px; margin:0 0 10px; }
-label { display:block; font-size:13px; color:var(--muted); margin-bottom:6px; }
-.field { margin-bottom:13px; }
-.form-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
-.check-row { display:flex; gap:18px; flex-wrap:wrap; margin:10px 0; }
-.check-row label { display:flex; gap:7px; align-items:center; color:var(--text); margin:0; }
-.check-row input { width:auto; }
+:root{--bg:#f4f6fa;--panel:#fff;--ink:#202638;--muted:#6b7280;--line:#e2e6ef;--accent:#6558d3;--accent2:#eeeaff;--danger:#c83b54}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+header{background:#24233a;color:#fff;padding:18px 22px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+header h1{font-size:20px;margin:0}header small{color:#c9c7e6}.wrap{max-width:1250px;margin:20px auto;padding:0 16px}
+nav{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}.tab,button{border:1px solid var(--line);border-radius:9px;padding:9px 13px;background:#fff;color:var(--ink);cursor:pointer;font:inherit}.tab.active,button.primary{background:var(--accent);color:#fff;border-color:var(--accent)}button.danger{color:var(--danger)}button:disabled{opacity:.5;cursor:default}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:17px;margin-bottom:16px;box-shadow:0 3px 14px #26304a08}
+h2{font-size:17px;margin:0 0 13px}h3{font-size:15px;margin:0 0 10px}.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}.grid.two{grid-template-columns:repeat(2,minmax(0,1fr))}
+label{display:block;color:var(--muted);font-size:12px;margin-bottom:5px}input,select,textarea{width:100%;padding:9px 10px;border:1px solid #d8dce7;border-radius:8px;background:#fff;color:var(--ink);font:inherit}textarea{min-height:70px;resize:vertical}.checks{display:flex;gap:12px;align-items:center;flex-wrap:wrap}.checks label{display:flex;gap:6px;align-items:center;margin:0;font-size:13px}.checks input{width:auto}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.stats{display:flex;gap:10px;flex-wrap:wrap}.stat{background:#f6f5ff;border-radius:10px;padding:10px 13px;min-width:120px}.stat b{font-size:20px;display:block}.stat span{font-size:12px;color:var(--muted)}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:end;margin-bottom:12px}.toolbar>div{min-width:170px;flex:1}.toolbar button{flex:0 0 auto}
+table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:10px 8px;border-bottom:1px solid var(--line);vertical-align:top}th{font-size:12px;color:var(--muted);white-space:nowrap}td .sub{font-size:12px;color:var(--muted)}.badge{display:inline-block;padding:2px 7px;background:#f0effb;border-radius:20px;font-size:11px;margin:2px}.fav{color:#d99b00}.pin{color:var(--accent)}.scroll{overflow:auto}
+.usercards{display:none}.usercard{border:1px solid var(--line);border-radius:11px;padding:12px;margin:8px 0}.usercard strong{font-size:15px}.usercard .cardmeta{color:var(--muted);font-size:12px;margin:5px 0}
+small.muted,.muted{color:var(--muted)}.hidden{display:none!important}.inline{display:inline-flex;gap:7px;align-items:center}.empty{text-align:center;color:var(--muted);padding:24px}
+dialog{border:0;border-radius:14px;padding:20px;max-width:600px;width:calc(100% - 24px);box-shadow:0 20px 70px #0003}dialog::backdrop{background:#11182777}.dialoghead{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.memo-tools{display:flex;gap:8px;flex-wrap:wrap;align-items:end;margin:7px 0}
+.memo-tools>div{flex:1;min-width:180px}
+.link-id{color:var(--accent);text-decoration:underline;text-decoration-style:dotted;cursor:pointer;font-weight:600}
+.draggable-id{cursor:grab;user-select:none}.relation-note{font-size:12px;color:var(--muted);margin:5px 0 9px}
+.detail-grid{display:grid;grid-template-columns:110px 1fr;gap:7px 12px}.detail-grid .key{color:var(--muted);font-size:12px}
 
-.table-wrap { overflow-x:auto; }
-table { width:100%; border-collapse:collapse; font-size:13px; }
-th,td {
-  padding:11px 9px; text-align:left; border-bottom:1px solid var(--line);
-  white-space:nowrap;
-}
-th { color:var(--muted); font-weight:600; }
-td.note { white-space:normal; min-width:140px; max-width:260px; }
-a { color:var(--primary); text-decoration:none; }
-a:hover { text-decoration:underline; }
-
-.tags { display:flex; gap:4px; flex-wrap:wrap; }
-.tag { font-size:11px; border-radius:6px; padding:4px 7px; background:#f0f1f5; }
-.tag.follow { background:#eaf2ff; color:#3266b4; }
-.tag.follower { background:#e9f8ef; color:#25804b; }
-.tag.mutual { background:#f2eaff; color:#7543b4; }
-
-.empty { color:var(--muted); padding:25px 10px; text-align:center; }
-.metrics { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
-.metric { background:#f7f8fc; border-radius:11px; padding:13px; }
-.metric .label { color:var(--muted); font-size:12px; }
-.metric .value { font-size:23px; font-weight:700; margin-top:4px; }
-.delta { font-size:12px; margin-top:4px; }
-.positive { color:var(--green); }
-.negative { color:var(--red); }
-.neutral { color:var(--muted); }
-.history-item { border-top:1px solid var(--line); padding:14px 0; }
-.history-item:first-child { border-top:0; }
-.history-head {
-  display:flex; justify-content:space-between; gap:10px;
-  align-items:center; flex-wrap:wrap;
-}
-.history-meta { color:var(--muted); font-size:12px; }
-.change-list { margin:8px 0 0; padding-left:20px; font-size:13px; }
-.change-list li { margin:4px 0; }
-.chart-box { width:100%; overflow:hidden; }
-.chart-box svg { width:100%; height:auto; display:block; }
-.chart-legend { display:flex; gap:14px; flex-wrap:wrap; font-size:12px; color:var(--muted); }
-.legend-dot {
-  display:inline-block; width:9px; height:9px;
-  border-radius:50%; margin-right:5px;
-}
-small.hint { color:var(--muted); display:block; margin-top:7px; line-height:1.5; }
-footer { color:var(--muted); text-align:center; font-size:12px; padding:10px; }
-
-/* スマホ用カード一覧：PCでは非表示 */
-.user-cards { display:none; }
-.user-card {
-  border:1px solid var(--line);
-  border-radius:12px;
-  padding:14px;
-  margin-bottom:10px;
-  background:#fff;
-}
-.user-card:last-child { margin-bottom:0; }
-.user-card-top {
-  display:flex;
-  justify-content:space-between;
-  align-items:flex-start;
-  gap:10px;
-}
-.user-card-name {
-  font-size:15px;
-  font-weight:700;
-  line-height:1.4;
-  overflow-wrap:anywhere;
-}
-.user-card-id {
-  font-size:12px;
-  margin-top:4px;
-  overflow-wrap:anywhere;
-}
-.user-card-info {
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:9px;
-  margin-top:13px;
-  padding-top:12px;
-  border-top:1px solid var(--line);
-}
-.user-card-info .info-label {
-  color:var(--muted);
-  font-size:11px;
-  margin-bottom:3px;
-}
-.user-card-info .info-value {
-  font-size:13px;
-  overflow-wrap:anywhere;
-}
-.user-card-note {
-  margin-top:11px;
-  padding:10px;
-  background:#f7f8fc;
-  border-radius:8px;
-  font-size:12px;
-  line-height:1.6;
-  white-space:pre-wrap;
-  overflow-wrap:anywhere;
-}
-.user-card-actions {
-  display:flex;
-  gap:8px;
-  margin-top:12px;
-}
-.user-card-actions button {
-  flex:1;
-  padding:9px;
-}
-
-@media(max-width:650px) {
-  header { padding:11px 13px; }
-  .header-inner { align-items:flex-start; flex-direction:column; gap:8px; }
-  .header-stats { justify-content:flex-start; gap:10px; }
-  h1 { font-size:20px; }
-  .stat { font-size:13px; }
-  .updated { font-size:11px; }
-
-  nav {
-    display:flex;
-    width:100%;
-    gap:5px;
-    margin-top:8px;
-  }
-  nav button {
-    flex:1;
-    padding:10px 5px;
-    font-size:12px;
-    white-space:nowrap;
-  }
-
-  main { padding:12px 10px 35px; }
-  .panel { padding:13px; border-radius:12px; }
-  .form-grid,.metrics { grid-template-columns:1fr; }
-  .metric .value { font-size:20px; }
-
-  /* PC用テーブルを隠してカード表示に切り替え */
-  .desktop-users { display:none; }
-  .user-cards { display:block; }
-
-  #userSearchPanel .toolbar {
-    flex-direction:column;
-    align-items:stretch;
-  }
-  #searchInput,#relationshipFilter { width:100%; }
-  #userActionPanel .toolbar button { flex:1; }
-
-  .user-card-top { flex-direction:column; }
-  .user-card-top .tags { margin-top:2px; }
-  .user-card-info { grid-template-columns:1fr 1fr; }
-  .user-card-actions button { min-height:40px; }
-
-  .history-head { align-items:flex-start; }
-  .history-item .metrics { grid-template-columns:repeat(3,minmax(0,1fr)); }
-  .history-item .metric { padding:9px 7px; }
-  .history-item .metric .value { font-size:17px; }
-  .chart-box { overflow-x:auto; }
-  .chart-box svg { min-width:520px; }
-}
+@media(max-width:800px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.scroll table{min-width:760px}.usercards{display:block}.desktopusers{display:none}}
+@media(max-width:480px){.grid,.grid.two{grid-template-columns:1fr}.wrap{padding:0 10px}.panel{padding:13px}}
 </style>
 </head>
 <body>
-
-<header>
-  <div class="header-inner">
-    <h1>NFM</h1>
-    <div class="header-stats">
-      <span class="stat" id="headerCounts">フォロー 0人 / フォロワー 0人</span>
-      <span class="updated" id="updatedAt">更新日時：未更新</span>
-    </div>
-  </div>
-  <div class="header-inner">
-    <nav>
-      <button class="active" data-page="users">ユーザー一覧</button>
-      <button data-page="maintenance">メンテナンス</button>
-      <button data-page="history">推移グラフ</button>
-    </nav>
-  </div>
-</header>
-
-<main class="main">
-
-  <!-- ユーザー一覧 -->
-  <section id="page-users" class="page active">
-    <div class="panel" id="userActionPanel">
-      <div class="toolbar">
-        <button class="primary" id="addUserBtn">＋ ユーザー登録</button>
-        <button id="saveCsvBtn">CSV保存</button>
-        <button id="loadCsvBtn">CSV読込</button>
-        <input id="csvFile" type="file" accept=".csv,text/csv" hidden>
-      </div>
-      <small class="hint">ユーザー情報とメンテナンス履歴をまとめてCSVに保存・読込できます。</small>
-    </div>
-
-    <div class="panel" id="userFormPanel" hidden>
-      <h2 id="userFormTitle">ユーザー登録</h2>
-      <form id="userForm">
-        <div class="form-grid">
-          <div class="field">
-            <label for="nanaId">nana ID（必須）</label>
-            <input id="nanaId" type="text" required placeholder="例：12345678">
-          </div>
-          <div class="field">
-            <label for="userName">名前</label>
-            <input id="userName" type="text" placeholder="表示名">
-          </div>
-          <div class="field">
-            <label for="followedAt">自分がフォローした日</label>
-            <input id="followedAt" type="date">
-          </div>
-          <div class="field">
-            <label for="followerAt">相手がフォローしてきた日</label>
-            <input id="followerAt" type="date">
-          </div>
-        </div>
-        <div class="check-row">
-          <label><input id="isFollowing" type="checkbox"> 自分がフォロー中</label>
-          <label><input id="isFollower" type="checkbox"> 相手がフォロワー</label>
-        </div>
-        <div class="field">
-          <label for="userNote">メモ</label>
-          <textarea id="userNote" rows="2" placeholder="備考など"></textarea>
-        </div>
-        <div class="toolbar">
-          <button class="primary" type="submit">保存</button>
-          <button type="button" id="cancelUserBtn">キャンセル</button>
-        </div>
-      </form>
-    </div>
-
-    <div class="panel" id="userSearchPanel">
-      <div class="toolbar">
-        <input id="searchInput" type="text" placeholder="名前・nana ID・メモで検索" style="flex:1">
-        <select id="relationshipFilter">
-          <option value="all">すべて</option>
-          <option value="following">フォロー中</option>
-          <option value="follower">フォロワー</option>
-          <option value="mutual">相互フォロー</option>
-          <option value="none">関係なし</option>
-        </select>
-      </div>
-    </div>
-
-    <div class="panel">
-      <!-- PC用テーブル -->
-      <div class="table-wrap desktop-users">
-        <table>
-          <thead>
-            <tr>
-              <th>名前 / nana ID</th>
-              <th>関係性</th>
-              <th>フォロー日</th>
-              <th>フォロワー日</th>
-              <th>メモ</th>
-              <th>操作</th>
-            </tr>
-          </thead>
-          <tbody id="usersTable"></tbody>
-        </table>
-      </div>
-
-      <!-- スマホ用カード -->
-      <div class="user-cards" id="usersCards"></div>
-
-      <div class="empty" id="usersEmpty">ユーザーが登録されていません。</div>
-    </div>
-  </section>
-
-  <!-- メンテナンス -->
-  <section id="page-maintenance" class="page">
-    <div class="panel">
-      <h2>メンテナンス記録</h2>
-      <p style="font-size:13px;color:var(--muted);line-height:1.6">
-        現在のユーザー一覧を記録します。前回の記録と比較して、人数の増減と個別ユーザーの変化を算出します。
-      </p>
-      <div class="field">
-        <label for="maintenanceMemo">今回のメモ</label>
-        <textarea id="maintenanceMemo" rows="3" placeholder="今回気づいたこと、特記事項など"></textarea>
-      </div>
-      <button class="primary" id="recordMaintenanceBtn">この状態を記録する</button>
-    </div>
-
-    <div class="panel">
-      <h2>現在の人数</h2>
-      <div class="metrics" id="currentMetrics"></div>
-    </div>
-
-    <div class="panel">
-      <div class="history-head">
-        <h2 style="margin:0">メンテナンス履歴</h2>
-        <span class="history-meta" id="historyCount">0件</span>
-      </div>
-      <div id="maintenanceHistoryList"></div>
-      <div class="empty" id="maintenanceHistoryEmpty">まだメンテナンス履歴がありません。</div>
-    </div>
-  </section>
-
-  <!-- 推移グラフ -->
-  <section id="page-history" class="page">
-    <div class="panel">
-      <h2>人数の推移</h2>
-      <div class="chart-legend">
-        <span><i class="legend-dot" style="background:#5865d9"></i>フォロー</span>
-        <span><i class="legend-dot" style="background:#198754"></i>フォロワー</span>
-        <span><i class="legend-dot" style="background:#a05ad4"></i>相互フォロー</span>
-      </div>
-      <div class="chart-box" id="historyChart"></div>
-      <small class="hint">メンテナンス記録が増えると、グラフに点が追加されます。</small>
-    </div>
-  </section>
-
-</main>
-
-<footer>NFM · データはこのブラウザ内に保存されます。</footer>
-
+<header><div><h1>NFM <small>nana Follow Manager</small></h1><small>フォロー・投稿・リアクションをまとめて管理</small></div><div class="inline"><button id="exportBtn">JSON保存</button><button id="csvBtn">CSV保存</button><label style="margin:0"><button onclick="document.getElementById('importFile').click()">読込</button><input id="importFile" type="file" accept=".json,.csv" hidden></label></div></header>
+<div class="wrap">
+<nav><button class="tab active" data-tab="users">ユーザー</button><button class="tab" data-tab="posts">投稿</button><button class="tab" data-tab="reactions">リアクション記録</button><button class="tab" data-tab="analysis">分析</button></nav>
+<section id="users" class="view">
+<div class="panel"><h2>ユーザー登録・編集</h2><form id="userForm">
+<input type="hidden" id="editId">
+<div class="grid">
+<div><label>Nana ID（数値）</label><input id="nanaId" type="text" inputmode="numeric" placeholder="例：123456" required></div>
+<div><label>表示名</label><input id="displayName" placeholder="ユーザー名" required></div>
+<div><label>フォロー状態</label><div class="checks"><label><input type="checkbox" id="isFollowing">自分がフォロー</label><label><input type="checkbox" id="isFollower">相手がフォロー</label></div></div>
+<div><label>その他確認</label><div class="checks"><label><input type="checkbox" id="otherCheck">要確認</label><label><input type="checkbox" id="favorite">★お気に入り</label><label><input type="checkbox" id="pinned">📌ピン留め</label></div></div>
+</div><div style="margin-top:10px"><label>メモ（NFM IDをリンクできます）</label>
+<div class="memo-tools"><div><label>関連ユーザーを選択</label><select id="memoLinkUser"><option value="">ユーザーを選択…</option></select></div><button type="button" id="insertMemoLink">@IDを挿入</button></div>
+<div class="relation-note">選択して挿入、またはユーザー一覧のNFM IDをPCでドラッグ＆ドロップ。メモ内の @NFM-xxxx はクリックして詳細を開けます。</div>
+<textarea id="userMemo" placeholder="例：@NFM-0005 とつながりあり。&#10;@NFM-0012 の転生アカと思われる。"></textarea></div>
+<div class="actions"><button class="primary" type="submit">登録 / 更新</button><button type="button" id="cancelEdit">入力クリア</button></div></form></div>
+<div class="panel"><div class="stats" id="userStats"></div></div>
+<div class="panel"><h2>ユーザー一覧</h2><div class="toolbar">
+<div><label>検索</label><input id="userSearch" placeholder="表示名・Nana ID・NFM ID・メモ"></div>
+<div><label>表示対象</label><select id="userFilter"><option value="all">すべて</option><option value="following">自分がフォロー</option><option value="follower">相手がフォロー</option><option value="mutual">相互フォロー</option><option value="other">要確認</option><option value="favorite">お気に入り</option></select></div>
+<div><label>並び順</label><select id="userSort"><option value="new">登録順（新しい）</option><option value="old">登録順（古い）</option><option value="nanaAsc">Nana ID 昇順（古い順）</option><option value="nanaDesc">Nana ID 降順（新しい順）</option><option value="name">表示名</option></select></div>
+<button id="clearSearch">検索解除</button></div>
+<div class="scroll desktopusers"><table><thead><tr><th>NFM ID</th><th>Nana ID</th><th>表示名 / メモ</th><th>関係</th><th>操作</th></tr></thead><tbody id="userRows"></tbody></table></div><div class="usercards" id="userCards"></div><div id="userEmpty" class="empty hidden">ユーザーがいません。</div></div>
+</section>
+<section id="posts" class="view hidden">
+<div class="panel"><h2>投稿登録・編集</h2><form id="postForm"><input id="postEditId" type="hidden"><div class="grid">
+<div><label>投稿日</label><input id="postDate" type="date" required></div><div><label>曲名</label><input id="songTitle" placeholder="曲名" required></div><div><label>アーティスト</label><input id="artist" placeholder="アーティスト"></div><div><label>タグ（カンマ区切り）</label><input id="postTags" placeholder="ネタ, コラボ, ケロケロ"></div>
+</div><div style="margin-top:10px"><label>メモ / URL</label><textarea id="postMemo"></textarea></div><div class="actions"><button class="primary" type="submit">投稿を登録 / 更新</button><button type="button" id="clearPost">入力クリア</button></div></form></div>
+<div class="panel"><h2>投稿一覧</h2><div class="toolbar"><div><label>検索</label><input id="postSearch" placeholder="曲名・アーティスト・タグ"></div><div><label>並び順</label><select id="postSort"><option value="new">投稿日（新しい）</option><option value="old">投稿日（古い）</option></select></div></div><div id="postList"></div></div>
+</section>
+<section id="reactions" class="view hidden">
+<div class="panel"><h2>リアクションを記録</h2><form id="reactionForm"><div class="grid">
+<div><label>対象投稿</label><select id="reactionPost" required></select></div><div><label>相手ユーザー</label><select id="reactionUser" required></select></div><div><label>記録日</label><input id="reactionDate" type="date" required></div><div><label>リアクション</label><select id="reactionType"><option>拍手</option><option>クラップバースト</option><option>コメント</option><option>ギフト</option><option>プレリス追加</option></select></div>
+</div><div style="margin-top:10px"><label>内容（コメント本文など）</label><textarea id="reactionMemo"></textarea></div><div class="actions"><button class="primary" type="submit">記録する</button></div></form></div>
+<div class="panel"><h2>記録一覧</h2><div class="toolbar"><div><label>ユーザー</label><select id="reactionFilterUser"><option value="">すべて</option></select></div><div><label>投稿</label><select id="reactionFilterPost"><option value="">すべて</option></select></div></div><div id="reactionList"></div></div>
+</section>
+<section id="analysis" class="view hidden"><div class="panel"><h2>リアクション分析</h2><p class="muted">投稿ごとの反応数と、ユーザー別の反応傾向を確認できます。記録済みデータをもとに集計します。</p><div id="analysisContent"></div></div></section>
+</div>
+<dialog id="userDetailDialog"><div class="dialoghead"><h2 id="detailTitle">ユーザー詳細</h2><button type="button" onclick="closeUserDetail()">閉じる</button></div><div id="detailBody"></div><div class="actions"><button type="button" class="primary" id="detailEditBtn">編集する</button></div></dialog>
 <script>
-"use strict";
+const KEY='nfm_data_v2';
+const $=id=>document.getElementById(id);
+const today=()=>new Date().toISOString().slice(0,10);
+let data=load();
+function fresh(){return {users:[],posts:[],reactions:[],nextUser:1,nextPost:1,nextReaction:1}}
+function load(){try{let d=JSON.parse(localStorage.getItem(KEY));return Object.assign(fresh(),d||{})}catch{return fresh()}}
+function save(){localStorage.setItem(KEY,JSON.stringify(data));render()}
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function nfm(n){return 'NFM-'+String(n).padStart(4,'0')}
+function resetUserForm(){ $('userForm').reset();$('editId').value='';}
+function resetPostForm(){ $('postForm').reset();$('postEditId').value='';$('postDate').value=today()}
+function dateLabel(d){return d||'—'}
 
-const STORAGE_USERS = "nana_follow_note_v1";
-const STORAGE_HISTORY = "nana_maintenance_history_v1";
-const STORAGE_UPDATED = "nana_updated_at_v1";
-
-let users = loadUsers();
-let history = loadHistory();
-let editingId = null;
-
-const $ = id => document.getElementById(id);
-const nowISO = () => new Date().toISOString();
-const uid = () => (crypto.randomUUID ? crypto.randomUUID() :
-  "id-" + Date.now() + "-" + Math.random().toString(16).slice(2));
-
-function loadUsers() {
-  try {
-    const parsed = JSON.parse(localStorage.getItem(STORAGE_USERS) || "[]");
-    return parsed.map(u => {
-      if (typeof u.isFollowing !== "boolean" || typeof u.isFollower !== "boolean") {
-        const rel = u.relationship || "none";
-        u.isFollowing = rel === "follow" || rel === "mutual";
-        u.isFollower = rel === "follower" || rel === "mutual";
-      }
-      return {
-        id:u.id || uid(),
-        nanaId:String(u.nanaId || "").trim(),
-        name:u.name || "",
-        isFollowing:!!u.isFollowing,
-        isFollower:!!u.isFollower,
-        followedAt:u.followedAt || "",
-        followerAt:u.followerAt || "",
-        note:u.note || "",
-        createdAt:u.createdAt || nowISO()
-      };
-    });
-  } catch { return []; }
+function renderMemo(text){
+ return esc(text).replace(/@?(NFM-\d{4,})/g,(match,id)=>{
+  const user=data.users.find(x=>x.nfmId===id);
+  if(!user)return match;
+  return `<span class="link-id" role="button" tabindex="0" onclick="openUserDetail(${user.id})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openUserDetail(${user.id})}" title="${esc(user.name)}の詳細">${match.startsWith('@')?'@':''}${id}</span>`;
+ });
 }
-
-function loadHistory() {
-  try {
-    const parsed = JSON.parse(localStorage.getItem(STORAGE_HISTORY) || "[]");
-    return Array.isArray(parsed) ? parsed : [];
-  } catch { return []; }
+function refreshMemoLinkOptions(){
+ const select=$('memoLinkUser'),current=select.value;
+ select.innerHTML='<option value="">ユーザーを選択…</option>'+data.users.slice().sort((a,b)=>a.id-b.id).map(u=>`<option value="${u.id}">${u.nfmId} — ${esc(u.name)}</option>`).join('');
+ if(data.users.some(u=>String(u.id)===current))select.value=current;
 }
-
-function saveUsers() {
-  localStorage.setItem(STORAGE_USERS, JSON.stringify(users));
-  localStorage.setItem(STORAGE_UPDATED, nowISO());
-  renderAll();
-}
-
-function saveHistory() {
-  localStorage.setItem(STORAGE_HISTORY, JSON.stringify(history));
-  renderAll();
-}
-
-function escapeHTML(value) {
-  return String(value ?? "").replace(/[&<>"']/g, ch => ({
-    "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;"
-  }[ch]));
-}
-
-function profileUrl(nanaId) {
-  return "https://nana-music.com/users/" + encodeURIComponent(nanaId);
-}
-
-function countsOf(list) {
-  return {
-    following:list.filter(u => u.isFollowing).length,
-    follower:list.filter(u => u.isFollower).length,
-    mutual:list.filter(u => u.isFollowing && u.isFollower).length
-  };
-}
-
-function relationTags(u) {
-  const tags = [];
-  if (u.isFollowing && u.isFollower) {
-    tags.push('<span class="tag mutual">相互フォロー</span>');
-  } else {
-    if (u.isFollowing) tags.push('<span class="tag follow">フォロー中</span>');
-    if (u.isFollower) tags.push('<span class="tag follower">フォロワー</span>');
-    if (!u.isFollowing && !u.isFollower) tags.push('<span class="tag">関係なし</span>');
-  }
-  return `<div class="tags">${tags.join("")}</div>`;
-}
-
-function relationshipName(u) {
-  if (u.isFollowing && u.isFollower) return "相互フォロー";
-  if (u.isFollowing) return "フォロー中";
-  if (u.isFollower) return "フォロワー";
-  return "関係なし";
-}
-
-function formatDateTime(value) {
-  if (!value) return "—";
-  const d = new Date(value);
-  if (Number.isNaN(d.getTime())) return value;
-  return d.toLocaleString("ja-JP", {
-    year:"numeric", month:"2-digit", day:"2-digit",
-    hour:"2-digit", minute:"2-digit"
-  });
-}
-
-function renderHeader() {
-  const c = countsOf(users);
-  $("headerCounts").textContent =
-    `フォロー ${c.following}人 / フォロワー ${c.follower}人`;
-  const updated = localStorage.getItem(STORAGE_UPDATED);
-  $("updatedAt").textContent =
-    "更新日時：" + (updated ? formatDateTime(updated) : "未更新");
-}
-
-function renderUsers() {
-  const q = $("searchInput").value.trim().toLowerCase();
-  const filter = $("relationshipFilter").value;
-
-  const filtered = users.filter(u => {
-    const hay = `${u.name} ${u.nanaId} ${u.note}`.toLowerCase();
-    if (q && !hay.includes(q)) return false;
-    if (filter === "following" && !u.isFollowing) return false;
-    if (filter === "follower" && !u.isFollower) return false;
-    if (filter === "mutual" && !(u.isFollowing && u.isFollower)) return false;
-    if (filter === "none" && (u.isFollowing || u.isFollower)) return false;
-    return true;
-  });
-
-  // PC用テーブル
-  $("usersTable").innerHTML = filtered.map(u => `
-    <tr>
-      <td>
-        <div>${escapeHTML(u.name || "（名前未設定）")}</div>
-        <div><a href="${escapeHTML(profileUrl(u.nanaId))}" target="_blank" rel="noopener">${escapeHTML(u.nanaId)}</a></div>
-      </td>
-      <td>${relationTags(u)}</td>
-      <td>${escapeHTML(u.followedAt || "—")}</td>
-      <td>${escapeHTML(u.followerAt || "—")}</td>
-      <td class="note">${escapeHTML(u.note)}</td>
-      <td>
-        <div class="toolbar">
-          <button class="small" data-edit="${escapeHTML(u.id)}">編集</button>
-          <button class="small danger" data-delete="${escapeHTML(u.id)}">削除</button>
-        </div>
-      </td>
-    </tr>
-  `).join("");
-
-  // スマホ用カード
-  $("usersCards").innerHTML = filtered.map(u => `
-    <article class="user-card">
-      <div class="user-card-top">
-        <div>
-          <div class="user-card-name">${escapeHTML(u.name || "（名前未設定）")}</div>
-          <div class="user-card-id">
-            <a href="${escapeHTML(profileUrl(u.nanaId))}" target="_blank" rel="noopener">
-              ${escapeHTML(u.nanaId)}
-            </a>
-          </div>
-        </div>
-        ${relationTags(u)}
-      </div>
-
-      <div class="user-card-info">
-        <div>
-          <div class="info-label">自分がフォローした日</div>
-          <div class="info-value">${escapeHTML(u.followedAt || "未設定")}</div>
-        </div>
-        <div>
-          <div class="info-label">相手がフォローしてきた日</div>
-          <div class="info-value">${escapeHTML(u.followerAt || "未設定")}</div>
-        </div>
-      </div>
-
-      ${u.note ? `<div class="user-card-note">${escapeHTML(u.note)}</div>` : ""}
-
-      <div class="user-card-actions">
-        <button data-edit="${escapeHTML(u.id)}">編集</button>
-        <button class="danger" data-delete="${escapeHTML(u.id)}">削除</button>
-      </div>
-    </article>
-  `).join("");
-
-  $("usersEmpty").hidden = filtered.length > 0;
-}
-
-function renderMetrics() {
-  const c = countsOf(users);
-  $("currentMetrics").innerHTML = [
-    ["フォロー",c.following],
-    ["フォロワー",c.follower],
-    ["相互フォロー",c.mutual]
-  ].map(([label,value]) => `
-    <div class="metric">
-      <div class="label">${label}</div>
-      <div class="value">${value}人</div>
-    </div>
-  `).join("");
-}
-
-function deltaText(value) {
-  if (value > 0) return `<span class="positive">+${value}</span>`;
-  if (value < 0) return `<span class="negative">${value}</span>`;
-  return `<span class="neutral">±0</span>`;
-}
-
-function snapshotNow() {
-  return users.map(u => ({
-    nanaId:u.nanaId,
-    name:u.name,
-    isFollowing:!!u.isFollowing,
-    isFollower:!!u.isFollower,
-    followedAt:u.followedAt || "",
-    followerAt:u.followerAt || ""
-  }));
-}
-
-function compareSnapshots(previousSnapshot, currentSnapshot) {
-  const before = new Map((previousSnapshot || []).map(u => [u.nanaId,u]));
-  const after = new Map((currentSnapshot || []).map(u => [u.nanaId,u]));
-  const changes = [];
-
-  for (const [nanaId,next] of after) {
-    const prev = before.get(nanaId);
-
-    if (!prev) {
-      changes.push({
-        nanaId, name:next.name || nanaId,
-        text:`管理対象に追加：${relationshipName(next)}`
-      });
-      continue;
-    }
-
-    if (prev.isFollowing !== next.isFollowing) {
-      changes.push({
-        nanaId, name:next.name || nanaId,
-        text:next.isFollowing ? "フォロー開始" : "フォロー解除"
-      });
-    }
-
-    if (prev.isFollower !== next.isFollower) {
-      changes.push({
-        nanaId, name:next.name || nanaId,
-        text:next.isFollower ? "新規フォロワー" : "フォロワー解除"
-      });
-    }
-
-    if (prev.name !== next.name) {
-      changes.push({
-        nanaId, name:next.name || nanaId,
-        text:`名前変更：${prev.name || "未設定"} → ${next.name || "未設定"}`
-      });
-    }
-  }
-
-  for (const [nanaId,prev] of before) {
-    if (!after.has(nanaId)) {
-      changes.push({
-        nanaId, name:prev.name || nanaId,
-        text:"管理対象から削除（関係の解除とは区別）"
-      });
-    }
-  }
-
-  return changes;
-}
-
-function makeMaintenanceRecord(memo) {
-  const snapshot = snapshotNow();
-  const counts = countsOf(snapshot);
-  const previous = history.length ? history[history.length-1] : null;
-  const previousCounts = previous?.counts || {
-    following:0,follower:0,mutual:0
-  };
-
-  const record = {
-    id:uid(),
-    date:nowISO(),
-    memo,
-    snapshot,
-    counts,
-    delta:{
-      following:counts.following - previousCounts.following,
-      follower:counts.follower - previousCounts.follower,
-      mutual:counts.mutual - previousCounts.mutual
-    },
-    changes:[]
-  };
-
-  record.changes = previous
-    ? compareSnapshots(previous.snapshot, snapshot)
-    : snapshot.map(u => ({
-        nanaId:u.nanaId,
-        name:u.name || u.nanaId,
-        text:`初回記録：${relationshipName(u)}`
-      }));
-
-  return record;
-}
-
-function renderMaintenanceHistory() {
-  const list = [...history].sort((a,b) => new Date(b.date)-new Date(a.date));
-  $("historyCount").textContent = `${list.length}件`;
-
-  $("maintenanceHistoryList").innerHTML = list.map(h => {
-    const delta = h.delta || {following:0,follower:0,mutual:0};
-    const changes = h.changes || [];
-
-    const changeItems = changes.map(c => `
-      <li>
-        <a href="${escapeHTML(profileUrl(c.nanaId))}" target="_blank" rel="noopener">${escapeHTML(c.name || c.nanaId)}</a>：
-        ${escapeHTML(c.text)}
-      </li>
-    `).join("");
-
-    return `
-      <div class="history-item">
-        <div class="history-head">
-          <strong>${escapeHTML(formatDateTime(h.date))}</strong>
-          <button class="small danger" data-delete-history="${escapeHTML(h.id)}">履歴削除</button>
-        </div>
-
-        <div class="metrics" style="margin-top:10px">
-          <div class="metric">
-            <div class="label">フォロー</div>
-            <div class="value">${h.counts?.following ?? 0}人</div>
-            <div class="delta">${deltaText(delta.following || 0)}</div>
-          </div>
-          <div class="metric">
-            <div class="label">フォロワー</div>
-            <div class="value">${h.counts?.follower ?? 0}人</div>
-            <div class="delta">${deltaText(delta.follower || 0)}</div>
-          </div>
-          <div class="metric">
-            <div class="label">相互フォロー</div>
-            <div class="value">${h.counts?.mutual ?? 0}人</div>
-            <div class="delta">${deltaText(delta.mutual || 0)}</div>
-          </div>
-        </div>
-
-        ${h.memo ? `<p style="font-size:13px;white-space:pre-wrap">${escapeHTML(h.memo)}</p>` : ""}
-
-        <details style="margin-top:9px">
-          <summary style="cursor:pointer;font-size:13px">個別の変化（${changes.length}件）</summary>
-          ${changeItems ? `<ul class="change-list">${changeItems}</ul>` : '<p class="history-meta">変化はありません。</p>'}
-        </details>
-      </div>
-    `;
-  }).join("");
-
-  $("maintenanceHistoryEmpty").hidden = list.length > 0;
-}
-
-function renderChart(records) {
-  const el = $("historyChart");
-
-  if (!records.length) {
-    el.innerHTML = '<div class="empty">メンテナンス記録が増えるとグラフが表示されます。</div>';
-    return;
-  }
-
-  const W=760,H=280,left=48,right=20,top=20,bottom=45;
-  const plotW=W-left-right, plotH=H-top-bottom;
-  const values=records.flatMap(r => [
-    r.counts?.following || 0,
-    r.counts?.follower || 0,
-    r.counts?.mutual || 0
-  ]);
-  const maxValue=Math.max(5,...values);
-  const x=i => records.length===1 ? left+plotW/2 : left+i*plotW/(records.length-1);
-  const y=v => top+plotH-(v/maxValue)*plotH;
-
-  const series=[
-    {key:"following",color:"#5865d9"},
-    {key:"follower",color:"#198754"},
-    {key:"mutual",color:"#a05ad4"}
-  ];
-
-  let svg=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="フォロー関係の推移グラフ">`;
-
-  for(let i=0;i<=4;i++){
-    const value=maxValue*i/4;
-    const yy=y(value);
-    svg+=`<line x1="${left}" y1="${yy}" x2="${W-right}" y2="${yy}" stroke="#e6e8ef"/>`;
-    svg+=`<text x="${left-8}" y="${yy+4}" text-anchor="end" font-size="11" fill="#777">${Math.round(value)}</text>`;
-  }
-
-  series.forEach(s=>{
-    const points=records.map((r,i)=>`${x(i)},${y(r.counts?.[s.key]||0)}`).join(" ");
-    svg+=`<polyline points="${points}" fill="none" stroke="${s.color}" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>`;
-    records.forEach((r,i)=>{
-      svg+=`<circle cx="${x(i)}" cy="${y(r.counts?.[s.key]||0)}" r="4" fill="${s.color}"/>`;
-    });
-  });
-
-  records.forEach((r,i)=>{
-    if(records.length<=8 || i===0 || i===records.length-1 || i%Math.ceil(records.length/6)===0){
-      const label=new Date(r.date).toLocaleDateString("ja-JP",{month:"2-digit",day:"2-digit"});
-      svg+=`<text x="${x(i)}" y="${H-15}" text-anchor="middle" font-size="11" fill="#777">${label}</text>`;
-    }
-  });
-
-  svg+="</svg>";
-  el.innerHTML=svg;
-}
-
-function renderAll() {
-  renderHeader();
-  renderUsers();
-  renderMetrics();
-  renderMaintenanceHistory();
-  renderChart([...history].sort((a,b)=>new Date(a.date)-new Date(b.date)));
-}
-
-function resetUserForm() {
-  editingId=null;
-  $("userForm").reset();
-  $("userFormTitle").textContent="ユーザー登録";
-  $("userFormPanel").hidden=true;
-}
-
-function openUserForm(user=null) {
-  editingId=user?.id || null;
-  $("userFormTitle").textContent=user ? "ユーザー編集" : "ユーザー登録";
-  $("nanaId").value=user?.nanaId || "";
-  $("userName").value=user?.name || "";
-  $("isFollowing").checked=!!user?.isFollowing;
-  $("isFollower").checked=!!user?.isFollower;
-  $("followedAt").value=user?.followedAt || "";
-  $("followerAt").value=user?.followerAt || "";
-  $("userNote").value=user?.note || "";
-  $("userFormPanel").hidden=false;
-  $("userFormPanel").scrollIntoView({behavior:"smooth",block:"start"});
-  $("nanaId").focus();
-}
-
-$("userForm").addEventListener("submit",event=>{
-  event.preventDefault();
-
-  const nanaId=$("nanaId").value.trim();
-  if(!nanaId) return;
-
-  const duplicate=users.find(u=>u.nanaId===nanaId && u.id!==editingId);
-  if(duplicate){
-    alert("このnana IDはすでに登録されています。");
-    return;
-  }
-
-  const existing=users.find(u=>u.id===editingId);
-  const user={
-    id:editingId || uid(),
-    nanaId,
-    name:$("userName").value.trim(),
-    isFollowing:$("isFollowing").checked,
-    isFollower:$("isFollower").checked,
-    followedAt:$("followedAt").value,
-    followerAt:$("followerAt").value,
-    note:$("userNote").value.trim(),
-    createdAt:existing?.createdAt || nowISO()
-  };
-
-  if(existing) users=users.map(u=>u.id===editingId ? user : u);
-  else users.push(user);
-
-  resetUserForm();
-  saveUsers();
+$('insertMemoLink').onclick=()=>{
+ const user=data.users.find(u=>u.id===Number($('memoLinkUser').value));
+ if(!user){alert('関連ユーザーを選択してください');return}
+ const t=$('userMemo'),start=t.selectionStart??t.value.length,end=t.selectionEnd??start;
+ const before=t.value.slice(0,start),after=t.value.slice(end),token='@'+user.nfmId;
+ const pre=before&&!/\s$/.test(before)?' ':'',post=after&&!/^\s/.test(after)?' ':'';
+ t.value=before+pre+token+post+after;t.focus();
+ const pos=(before+pre+token+post).length;t.setSelectionRange(pos,pos);
+};
+function dragNfmId(event,id){const u=data.users.find(x=>x.id===id);if(u){event.dataTransfer.setData('text/plain','@'+u.nfmId);event.dataTransfer.effectAllowed='copy'}}
+$('userMemo').addEventListener('dragover',e=>{e.preventDefault();e.dataTransfer.dropEffect='copy'});
+$('userMemo').addEventListener('drop',e=>{
+ e.preventDefault();const token=e.dataTransfer.getData('text/plain');if(!/^@?NFM-\d{4,}$/.test(token))return;
+ const t=e.currentTarget,start=t.selectionStart??t.value.length,end=t.selectionEnd??start,b=t.value.slice(0,start),a=t.value.slice(end);
+ const value=token.startsWith('@')?token:'@'+token,pre=b&&!/\s$/.test(b)?' ':'',post=a&&!/^\s/.test(a)?' ':'';
+ t.value=b+pre+value+post+a;t.focus();const pos=(b+pre+value+post).length;t.setSelectionRange(pos,pos);
 });
+function openUserDetail(id){
+ const u=data.users.find(x=>x.id===id);if(!u)return;
+ $('detailTitle').textContent=u.nfmId+' — '+u.name;
+ const ids=[...String(u.memo||'').matchAll(/@?(NFM-\d{4,})/g)].map(m=>m[1]);
+ const rel=[...new Set(ids)].map(n=>data.users.find(x=>x.nfmId===n)).filter(Boolean);
+ $('detailBody').innerHTML=`<div class="detail-grid"><div class="key">Nana ID</div><div>${esc(u.nanaId)}</div><div class="key">フォロー状態</div><div>${u.following?'自分がフォロー ':''}${u.follower?'相手がフォロー ':''}${u.other?'要確認':''}</div><div class="key">メモ</div><div>${renderMemo(u.memo||'（メモなし）')}</div><div class="key">関連ユーザー</div><div>${rel.length?rel.map(v=>`<span class="link-id" onclick="openUserDetail(${v.id})">${v.nfmId} — ${esc(v.name)}</span>`).join('<br>'):'なし'}</div></div>`;
+ $('detailEditBtn').onclick=()=>{closeUserDetail();editUser(id)};$('userDetailDialog').showModal();
+}
+function closeUserDetail(){$('userDetailDialog').close()}
 
-$("addUserBtn").addEventListener("click",()=>{
-  openUserForm();
-  $("userFormPanel").scrollIntoView({behavior:"smooth",block:"start"});
+document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{
+function renderMemo(text){
+ return esc(text).replace(/@?(NFM-\d{4,})/g,(match,id)=>{
+  const user=data.users.find(x=>x.nfmId===id);
+  if(!user)return match;
+  return `<span class="link-id" role="button" tabindex="0" onclick="openUserDetail(${user.id})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openUserDetail(${user.id})}" title="${esc(user.name)}の詳細">${match.startsWith('@')?'@':''}${id}</span>`;
+ });
+}
+function refreshMemoLinkOptions(){
+ const select=$('memoLinkUser'),current=select.value;
+ select.innerHTML='<option value="">ユーザーを選択…</option>'+data.users.slice().sort((a,b)=>a.id-b.id).map(u=>`<option value="${u.id}">${u.nfmId} — ${esc(u.name)}</option>`).join('');
+ if(data.users.some(u=>String(u.id)===current))select.value=current;
+}
+$('insertMemoLink').onclick=()=>{
+ const user=data.users.find(u=>u.id===Number($('memoLinkUser').value));
+ if(!user){alert('関連ユーザーを選択してください');return}
+ const t=$('userMemo'),start=t.selectionStart??t.value.length,end=t.selectionEnd??start;
+ const before=t.value.slice(0,start),after=t.value.slice(end),token='@'+user.nfmId;
+ const pre=before&&!/\s$/.test(before)?' ':'',post=after&&!/^\s/.test(after)?' ':'';
+ t.value=before+pre+token+post+after;t.focus();
+ const pos=(before+pre+token+post).length;t.setSelectionRange(pos,pos);
+};
+function dragNfmId(event,id){const u=data.users.find(x=>x.id===id);if(u){event.dataTransfer.setData('text/plain','@'+u.nfmId);event.dataTransfer.effectAllowed='copy'}}
+$('userMemo').addEventListener('dragover',e=>{e.preventDefault();e.dataTransfer.dropEffect='copy'});
+$('userMemo').addEventListener('drop',e=>{
+ e.preventDefault();const token=e.dataTransfer.getData('text/plain');if(!/^@?NFM-\d{4,}$/.test(token))return;
+ const t=e.currentTarget,start=t.selectionStart??t.value.length,end=t.selectionEnd??start,b=t.value.slice(0,start),a=t.value.slice(end);
+ const value=token.startsWith('@')?token:'@'+token,pre=b&&!/\s$/.test(b)?' ':'',post=a&&!/^\s/.test(a)?' ':'';
+ t.value=b+pre+value+post+a;t.focus();const pos=(b+pre+value+post).length;t.setSelectionRange(pos,pos);
 });
-$("cancelUserBtn").addEventListener("click",resetUserForm);
-$("searchInput").addEventListener("input",renderUsers);
-$("relationshipFilter").addEventListener("change",renderUsers);
-
-/* PCテーブル・スマホカード共通の編集／削除操作 */
-function handleUserAction(event) {
-  const button=event.target.closest("button");
-  if(!button) return;
-
-  const editId=button.dataset.edit;
-  const deleteId=button.dataset.delete;
-
-  if(editId){
-    const user=users.find(u=>u.id===editId);
-    if(user) openUserForm(user);
-  }
-
-  if(deleteId){
-    const user=users.find(u=>u.id===deleteId);
-    if(!user) return;
-
-    if(confirm(`${user.name || user.nanaId} を一覧から削除しますか？\n過去の履歴は変更されません。`)){
-      users=users.filter(u=>u.id!==deleteId);
-      saveUsers();
-    }
-  }
+function openUserDetail(id){
+ const u=data.users.find(x=>x.id===id);if(!u)return;
+ $('detailTitle').textContent=u.nfmId+' — '+u.name;
+ const ids=[...String(u.memo||'').matchAll(/@?(NFM-\d{4,})/g)].map(m=>m[1]);
+ const rel=[...new Set(ids)].map(n=>data.users.find(x=>x.nfmId===n)).filter(Boolean);
+ $('detailBody').innerHTML=`<div class="detail-grid"><div class="key">Nana ID</div><div>${esc(u.nanaId)}</div><div class="key">フォロー状態</div><div>${u.following?'自分がフォロー ':''}${u.follower?'相手がフォロー ':''}${u.other?'要確認':''}</div><div class="key">メモ</div><div>${renderMemo(u.memo||'（メモなし）')}</div><div class="key">関連ユーザー</div><div>${rel.length?rel.map(v=>`<span class="link-id" onclick="openUserDetail(${v.id})">${v.nfmId} — ${esc(v.name)}</span>`).join('<br>'):'なし'}</div></div>`;
+ $('detailEditBtn').onclick=()=>{closeUserDetail();editUser(id)};$('userDetailDialog').showModal();
 }
+function closeUserDetail(){$('userDetailDialog').close()}
 
-$("usersTable").addEventListener("click",handleUserAction);
-$("usersCards").addEventListener("click",handleUserAction);
-
-$("recordMaintenanceBtn").addEventListener("click",()=>{
-  if(!confirm("現在のユーザー一覧をメンテナンス履歴として記録しますか？")) return;
-
-  const record=makeMaintenanceRecord($("maintenanceMemo").value.trim());
-  history.push(record);
-  $("maintenanceMemo").value="";
-  localStorage.setItem(STORAGE_UPDATED,nowISO());
-  saveHistory();
-
-  alert("メンテナンス記録を保存しました。");
-});
-
-$("maintenanceHistoryList").addEventListener("click",event=>{
-  const button=event.target.closest("[data-delete-history]");
-  const id=button?.dataset.deleteHistory;
-  if(!id) return;
-
-  if(!confirm("このメンテナンス履歴を削除しますか？")) return;
-
-  history=history.filter(h=>h.id!==id);
-  saveHistory();
-});
-
-/* ページ切替 */
-function showPage(page){
-  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
-  $("page-"+page).classList.add("active");
-
-  document.querySelectorAll("nav button").forEach(b=>{
-    b.classList.toggle("active",b.dataset.page===page);
-  });
-
-  window.scrollTo({top:0,behavior:"smooth"});
-}
-document.querySelectorAll("nav button").forEach(button=>{
-  button.addEventListener("click",()=>showPage(button.dataset.page));
-});
-
-/* CSV処理 */
-function csvCell(value){
-  return '"' + String(value ?? "").replace(/"/g,'""') + '"';
-}
-function csvLine(values){
-  return values.map(csvCell).join(",");
-}
-
-function localFileTimestamp(date=new Date()){
-  const pad=n=>String(n).padStart(2,"0");
-  return `${date.getFullYear()}${pad(date.getMonth()+1)}${pad(date.getDate())}_${pad(date.getHours())}${pad(date.getMinutes())}`;
-}
-
-function buildCSV(){
-  const headers=[
-    "recordType","id","nanaId","name","isFollowing","isFollower",
-    "followedAt","followerAt","note","createdAt",
-    "maintenanceAt","memo","snapshot","counts","delta","changes"
-  ];
-
-  const rows=[csvLine(headers)];
-
-  users.forEach(u=>{
-    rows.push(csvLine([
-      "user",u.id,u.nanaId,u.name,u.isFollowing,u.isFollower,
-      u.followedAt,u.followerAt,u.note,u.createdAt,
-      "","","","","",""
-    ]));
-  });
-
-  history.forEach(h=>{
-    rows.push(csvLine([
-      "maintenance",h.id,"","","","","","","","",
-      h.date,h.memo,
-      JSON.stringify(h.snapshot || []),
-      JSON.stringify(h.counts || {}),
-      JSON.stringify(h.delta || {}),
-      JSON.stringify(h.changes || [])
-    ]));
-  });
-
-  return "\uFEFF"+rows.join("\r\n");
-}
-
-async function saveCSV(){
-  const csv=buildCSV();
-  const filename=`nfm_${localFileTimestamp()}.csv`;
-  const blob=new Blob([csv],{type:"text/csv;charset=utf-8;"});
-
-  if(window.showSaveFilePicker){
-    try{
-      const handle=await window.showSaveFilePicker({
-        suggestedName:filename,
-        types:[{
-          description:"CSVファイル",
-          accept:{"text/csv":[".csv"]}
-        }]
-      });
-      const writable=await handle.createWritable();
-      await writable.write(blob);
-      await writable.close();
-      return;
-    }catch(error){
-      if(error.name==="AbortError") return;
-      console.warn("保存ダイアログを利用できません。通常ダウンロードに切り替えます。",error);
-    }
-  }
-
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement("a");
-  a.href=url;
-  a.download=filename;
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  setTimeout(()=>URL.revokeObjectURL(url),1000);
-}
-
-function parseCSV(text){
-  text=text.replace(/^\uFEFF/,"");
-
-  const rows=[];
-  let row=[],cell="",quoted=false;
-
-  for(let i=0;i<text.length;i++){
-    const ch=text[i];
-
-    if(quoted){
-      if(ch==='"' && text[i+1]==='"'){
-        cell+='"';
-        i++;
-      }else if(ch==='"'){
-        quoted=false;
-      }else{
-        cell+=ch;
-      }
-    }else{
-      if(ch==='"'){
-        quoted=true;
-      }else if(ch===","){
-        row.push(cell);
-        cell="";
-      }else if(ch==="\n"){
-        row.push(cell);
-        rows.push(row);
-        row=[];
-        cell="";
-      }else if(ch!=="\r"){
-        cell+=ch;
-      }
-    }
-  }
-
-  if(cell.length || row.length){
-    row.push(cell);
-    rows.push(row);
-  }
-
-  return rows;
-}
-
-function parseBoolean(value){
-  const v=String(value ?? "").trim().toLowerCase();
-  return ["true","1","yes","y","はい"].includes(v);
-}
-
-function parseJSONCell(value,fallback){
-  try{return JSON.parse(value || "");}
-  catch{return fallback;}
-}
-
-async function loadCSVFile(file){
-  const text=await file.text();
-  const rows=parseCSV(text);
-
-  if(rows.length<2) throw new Error("CSVにデータ行がありません。");
-
-  const headers=rows[0].map(h=>h.trim());
-  if(!headers.includes("recordType") || !headers.includes("nanaId")){
-    throw new Error("対応していないCSV形式です。NFMのCSV保存で出力したファイルを使用してください。");
-  }
-
-  const index=name=>headers.indexOf(name);
-  const val=(row,name)=>{
-    const i=index(name);
-    return i>=0 ? (row[i] ?? "") : "";
-  };
-
-  const importedUsers=[];
-  const importedHistory=[];
-
-  for(const row of rows.slice(1)){
-    if(!row.length || row.every(v=>!String(v).trim())) continue;
-
-    const type=val(row,"recordType");
-
-    if(type==="user"){
-      const nanaId=val(row,"nanaId").trim();
-      if(!nanaId) continue;
-
-      importedUsers.push({
-        id:val(row,"id") || uid(),
-        nanaId,
-        name:val(row,"name"),
-        isFollowing:parseBoolean(val(row,"isFollowing")),
-        isFollower:parseBoolean(val(row,"isFollower")),
-        followedAt:val(row,"followedAt"),
-        followerAt:val(row,"followerAt"),
-        note:val(row,"note"),
-        createdAt:val(row,"createdAt") || nowISO()
-      });
-    }
-
-    if(type==="maintenance"){
-      const date=val(row,"maintenanceAt");
-      if(!date) continue;
-
-      importedHistory.push({
-        id:val(row,"id") || uid(),
-        date,
-        memo:val(row,"memo"),
-        snapshot:parseJSONCell(val(row,"snapshot"),[]),
-        counts:parseJSONCell(val(row,"counts"),{following:0,follower:0,mutual:0}),
-        delta:parseJSONCell(val(row,"delta"),{following:0,follower:0,mutual:0}),
-        changes:parseJSONCell(val(row,"changes"),[])
-      });
-    }
-  }
-
-  const seen=new Set();
-  for(const u of importedUsers){
-    if(seen.has(u.nanaId)){
-      throw new Error(`CSV内に重複したnana IDがあります：${u.nanaId}`);
-    }
-    seen.add(u.nanaId);
-  }
-
-  if(!confirm(
-    `CSVから読込しますか？\n\nユーザー：${importedUsers.length}件\nメンテナンス履歴：${importedHistory.length}件\n\n現在のデータは置き換えられます。`
-  )){
-    return;
-  }
-
-  users=importedUsers;
-  history=importedHistory.sort((a,b)=>new Date(a.date)-new Date(b.date));
-
-  localStorage.setItem(STORAGE_USERS,JSON.stringify(users));
-  localStorage.setItem(STORAGE_HISTORY,JSON.stringify(history));
-  localStorage.setItem(STORAGE_UPDATED,nowISO());
-
-  renderAll();
-  alert("CSVから読込しました。");
-}
-
-$("saveCsvBtn").addEventListener("click",saveCSV);
-$("loadCsvBtn").addEventListener("click",()=>$("csvFile").click());
-
-$("csvFile").addEventListener("change",async event=>{
-  const file=event.target.files?.[0];
-  if(!file) return;
-
-  try{
-    await loadCSVFile(file);
-  }catch(error){
-    alert("CSVの読込に失敗しました。\n"+error.message);
-  }finally{
-    event.target.value="";
-  }
-});
-
-renderAll();
+document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x===b));document.querySelectorAll('.view').forEach(x=>x.classList.toggle('hidden',x.id!==b.dataset.tab));});
+$('userForm').onsubmit=e=>{e.preventDefault();let id=$('editId').value, nana=$('nanaId').value.trim();if(!/^\d+$/.test(nana)){alert('Nana IDは数字で入力してください');return}
+let duplicate=data.users.find(u=>u.nanaId===nana&&u.id!==Number(id));if(duplicate){alert('同じNana IDのユーザーが登録済みです');return}
+let u={nanaId:nana,name:$('displayName').value.trim(),following:$('isFollowing').checked,follower:$('isFollower').checked,other:$('otherCheck').checked,favorite:$('favorite').checked,pinned:$('pinned').checked,memo:$('userMemo').value};
+if(id){Object.assign(data.users.find(x=>x.id===Number(id)),u)}else{u.id=data.nextUser++;u.nfmId=nfm(u.id);u.createdAt=new Date().toISOString();data.users.push(u)}resetUserForm();save()};
+$('cancelEdit').onclick=resetUserForm;
+$('userSearch').oninput=renderUsers;$('userFilter').onchange=renderUsers;$('userSort').onchange=renderUsers;$('clearSearch').onclick=()=>{$('userSearch').value='';$('userFilter').value='all';renderUsers()};
+function editUser(id){let u=data.users.find(x=>x.id===id);if(!u)return;$('editId').value=u.id;$('nanaId').value=u.nanaId;$('displayName').value=u.name;$('isFollowing').checked=u.following;$('isFollower').checked=u.follower;$('otherCheck').checked=u.other;$('favorite').checked=u.favorite;$('pinned').checked=u.pinned;$('userMemo').value=u.memo||'';window.scrollTo({top:0,behavior:'smooth'})}
+function deleteUser(id){if(!confirm('ユーザーを削除しますか？関連するリアクション記録も削除されます。NFM番号は再利用されません。'))return;data.users=data.users.filter(u=>u.id!==id);data.reactions=data.reactions.filter(r=>r.userId!==id);save()}
+function renderUsers(){let q=$('userSearch').value.toLowerCase(),f=$('userFilter').value,s=$('userSort').value;let a=data.users.filter(u=>(`${u.nfmId} ${u.nanaId} ${u.name} ${u.memo||''}`).toLowerCase().includes(q)).filter(u=>f==='all'||(f==='following'&&u.following)||(f==='follower'&&u.follower)||(f==='mutual'&&u.following&&u.follower)||(f==='other'&&u.other)||(f==='favorite'&&u.favorite));
+a.sort((x,y)=>y.pinned-x.pinned||(s==='new'?y.id-x.id:s==='old'?x.id-y.id:s==='nanaAsc'?Number(x.nanaId)-Number(y.nanaId):s==='nanaDesc'?Number(y.nanaId)-Number(x.nanaId):x.name.localeCompare(y.name,'ja')));
+$('userRows').innerHTML=a.map(u=>`<tr><td><span class="draggable-id" draggable="true" ondragstart="dragNfmId(event,${u.id})" onclick="openUserDetail(${u.id})" title="クリックで詳細 / PCではドラッグ">${u.nfmId}</span>${u.pinned?' <span class="pin">📌</span>':''}</td><td>${esc(u.nanaId)}</td><td><b>${esc(u.name)}</b>${u.favorite?' <span class="fav">★</span>':''}<div class="sub">${renderMemo(u.memo||'')}</div></td><td>${u.following?'<span class="badge">自分→相手</span>':''}${u.follower?'<span class="badge">相手→自分</span>':''}${u.other?'<span class="badge">要確認</span>':''}</td><td><button onclick="editUser(${u.id})">編集</button> <button class="danger" onclick="deleteUser(${u.id})">削除</button></td></tr>`).join('');
+$('userCards').innerHTML=a.map(u=>`<div class="usercard"><strong>${esc(u.name)} ${u.favorite?'★':''} ${u.pinned?'📌':''}</strong><div class="cardmeta">${u.nfmId} / Nana ID: ${esc(u.nanaId)}</div><div>${u.following?'自分がフォロー ':''}${u.follower?'相手がフォロー ':''}${u.other?'要確認':''}</div><div class="sub">${renderMemo(u.memo||'')}</div><div class="actions"><button onclick="editUser(${u.id})">編集</button><button class="danger" onclick="deleteUser(${u.id})">削除</button></div></div>`).join('');
+$('userEmpty').classList.toggle('hidden',a.length>0);$('userStats').innerHTML=[['登録数',data.users.length],['フォロー中',data.users.filter(u=>u.following).length],['フォロワー',data.users.filter(u=>u.follower).length],['相互',data.users.filter(u=>u.following&&u.follower).length]].map(x=>`<div class="stat"><b>${x[1]}</b><span>${x[0]}</span></div>`).join('')}
+$('postForm').onsubmit=e=>{e.preventDefault();let id=Number($('postEditId').value);let p={date:$('postDate').value,title:$('songTitle').value.trim(),artist:$('artist').value.trim(),tags:$('postTags').value.split(',').map(x=>x.trim()).filter(Boolean),memo:$('postMemo').value};if(id)Object.assign(data.posts.find(x=>x.id===id),p);else{p.id=data.nextPost++;data.posts.push(p)}resetPostForm();save()};
+$('clearPost').onclick=resetPostForm;
+function editPost(id){let p=data.posts.find(x=>x.id===id);$('postEditId').value=p.id;$('postDate').value=p.date;$('songTitle').value=p.title;$('artist').value=p.artist;$('postTags').value=p.tags.join(', ');$('postMemo').value=p.memo||'';window.scrollTo({top:0,behavior:'smooth'})}
+function deletePost(id){if(!confirm('投稿を削除しますか？関連リアクションも削除されます。'))return;data.posts=data.posts.filter(p=>p.id!==id);data.reactions=data.reactions.filter(r=>r.postId!==id);save()}
+function renderPosts(){let q=$('postSearch').value.toLowerCase(),s=$('postSort').value;let a=data.posts.filter(p=>(p.title+' '+p.artist+' '+p.tags.join(' ')).toLowerCase().includes(q));a.sort((x,y)=>s==='new'?y.date.localeCompare(x.date):x.date.localeCompare(y.date));$('postList').innerHTML=a.length?a.map(p=>`<div class="usercard"><strong>${esc(p.title)}</strong> — ${esc(p.artist)}<div class="cardmeta">${dateLabel(p.date)} ${p.tags.map(t=>`<span class="badge">${esc(t)}</span>`).join('')}</div><div>${esc(p.memo||'')}</div><div class="actions"><button onclick="editPost(${p.id})">編集</button><button class="danger" onclick="deletePost(${p.id})">削除</button></div></div>`).join():'<div class="empty">投稿がありません。</div>'}
+$('postSearch').oninput=renderPosts;$('postSort').onchange=renderPosts;
+$('reactionDate').value=today();
+$('reactionForm').onsubmit=e=>{e.preventDefault();if(!data.posts.length||!data.users.length){alert('先にユーザーと投稿を登録してください');return}data.reactions.push({id:data.nextReaction++,postId:Number($('reactionPost').value),userId:Number($('reactionUser').value),date:$('reactionDate').value,type:$('reactionType').value,memo:$('reactionMemo').value});$('reactionMemo').value='';save()};
+$('reactionFilterUser').onchange=renderReactions;$('reactionFilterPost').onchange=renderReactions;
+function renderReactions(){let r=data.reactions.filter(x=>(!$('reactionFilterUser').value||x.userId===Number($('reactionFilterUser').value))&&(!$('reactionFilterPost').value||x.postId===Number($('reactionFilterPost').value))).sort((a,b)=>b.date.localeCompare(a.date));$('reactionList').innerHTML=r.length?r.map(x=>{let u=data.users.find(y=>y.id===x.userId),p=data.posts.find(y=>y.id===x.postId);return `<div class="usercard"><strong>${esc(u?.name||'削除済み')} × ${esc(p?.title||'削除済み')}</strong><div class="cardmeta">${esc(x.date)} · <span class="badge">${esc(x.type)}</span></div>${esc(x.memo||'')}<div class="actions"><button class="danger" onclick="deleteReaction(${x.id})">削除</button></div></div>`}).join():'<div class="empty">記録がありません。</div>'}
+function deleteReaction(id){if(confirm('この記録を削除しますか？')){data.reactions=data.reactions.filter(x=>x.id!==id);save()}}
+function fillSelects(){let users=data.users.slice().sort((a,b)=>a.name.localeCompare(b.name,'ja')),posts=data.posts.slice().sort((a,b)=>b.date.localeCompare(a.date));$('reactionUser').innerHTML=users.map(u=>`<option value="${u.id}">${esc(u.name)} (${u.nfmId})</option>`).join('');$('reactionPost').innerHTML=posts.map(p=>`<option value="${p.id}">${esc(p.date)} ${esc(p.title)}</option>`).join('');$('reactionFilterUser').innerHTML='<option value="">すべて</option>'+users.map(u=>`<option value="${u.id}">${esc(u.name)}</option>`).join('');$('reactionFilterPost').innerHTML='<option value="">すべて</option>'+posts.map(p=>`<option value="${p.id}">${esc(p.title)}</option>`).join('')}
+function renderAnalysis(){let counts={};data.reactions.forEach(r=>{let p=data.posts.find(p=>p.id===r.postId);if(!p)return;let k=p.id;counts[k]??={p,total:0,types:{}};counts[k].total++;counts[k].types[r.type]=(counts[k].types[r.type]||0)+1});let arr=Object.values(counts).sort((a,b)=>b.total-a.total);$('analysisContent').innerHTML=arr.length?arr.map(x=>`<div class="usercard"><strong>${esc(x.p.title)}</strong><div class="cardmeta">${x.p.date} · 記録 ${x.total}件</div>${Object.entries(x.types).map(([k,v])=>`<span class="badge">${esc(k)}：${v}</span>`).join('')}</div>`).join():'<div class="empty">リアクション記録が蓄積されると、ここに集計が表示されます。</div>'}
+function render(){renderUsers();renderPosts();fillSelects();refreshMemoLinkOptions();renderReactions();renderAnalysis()}
+$('exportBtn').onclick=()=>download('nfm-backup.json',JSON.stringify(data,null,2),'application/json');
+$('csvBtn').onclick=()=>{let rows=[['NFM_ID','Nana_ID','表示名','フォロー','フォロワー','要確認','お気に入り','ピン','メモ'],...data.users.map(u=>[u.nfmId,u.nanaId,u.name,u.following,u.follower,u.other,u.favorite,u.pinned,u.memo||''])];download('nfm-users.csv',rows.map(r=>r.map(csv).join(',')).join('\r\n'),'text/csv;charset=utf-8')};
+function csv(v){return '"'+String(v??'').replace(/"/g,'""')+'"'}
+function download(name,text,type){let a=document.createElement('a'),url=URL.createObjectURL(new Blob(['\ufeff',text],{type}));a.href=url;a.download=name;a.click();URL.revokeObjectURL(url)}
+$('importFile').onchange=async e=>{let f=e.target.files[0];if(!f)return;try{let text=await f.text();if(f.name.toLowerCase().endsWith('.json')){let d=JSON.parse(text);if(!d.users||!d.posts||!d.reactions)throw Error('NFM形式のJSONではありません');if(confirm('現在のデータを読み込んだ内容で置き換えますか？')){data=Object.assign(fresh(),d);save()}}else{alert('CSV取り込みはこの版ではユーザー一覧CSVの復元に未対応です。JSONバックアップをご利用ください。')}}catch(err){alert('読み込みに失敗しました：'+err.message)}e.target.value=''};
+resetPostForm();render();
 </script>
-</body>
-</html>
+</body></html>
