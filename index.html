@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -44,7 +43,9 @@ input,select,textarea {
   font:inherit; border:1px solid #d8dce5; border-radius:9px;
   padding:10px 11px; background:#fff; color:var(--text); min-width:0;
 }
-input:focus,select:focus,textarea:focus { outline:2px solid #cdd1ff; border-color:var(--primary); }
+input:focus,select:focus,textarea:focus {
+  outline:2px solid #cdd1ff; border-color:var(--primary);
+}
 input[type="text"],input[type="date"],textarea { width:100%; }
 button {
   font:inherit; cursor:pointer; border-radius:9px; padding:10px 13px;
@@ -62,18 +63,24 @@ label { display:block; font-size:13px; color:var(--muted); margin-bottom:6px; }
 .check-row { display:flex; gap:18px; flex-wrap:wrap; margin:10px 0; }
 .check-row label { display:flex; gap:7px; align-items:center; color:var(--text); margin:0; }
 .check-row input { width:auto; }
+
 .table-wrap { overflow-x:auto; }
 table { width:100%; border-collapse:collapse; font-size:13px; }
-th,td { padding:11px 9px; text-align:left; border-bottom:1px solid var(--line); white-space:nowrap; }
+th,td {
+  padding:11px 9px; text-align:left; border-bottom:1px solid var(--line);
+  white-space:nowrap;
+}
 th { color:var(--muted); font-weight:600; }
 td.note { white-space:normal; min-width:140px; max-width:260px; }
 a { color:var(--primary); text-decoration:none; }
 a:hover { text-decoration:underline; }
-.tags { display:flex; gap:4px; }
+
+.tags { display:flex; gap:4px; flex-wrap:wrap; }
 .tag { font-size:11px; border-radius:6px; padding:4px 7px; background:#f0f1f5; }
 .tag.follow { background:#eaf2ff; color:#3266b4; }
 .tag.follower { background:#e9f8ef; color:#25804b; }
 .tag.mutual { background:#f2eaff; color:#7543b4; }
+
 .empty { color:var(--muted); padding:25px 10px; text-align:center; }
 .metrics { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
 .metric { background:#f7f8fc; border-radius:11px; padding:13px; }
@@ -85,25 +92,135 @@ a:hover { text-decoration:underline; }
 .neutral { color:var(--muted); }
 .history-item { border-top:1px solid var(--line); padding:14px 0; }
 .history-item:first-child { border-top:0; }
-.history-head { display:flex; justify-content:space-between; gap:10px; align-items:center; flex-wrap:wrap; }
+.history-head {
+  display:flex; justify-content:space-between; gap:10px;
+  align-items:center; flex-wrap:wrap;
+}
 .history-meta { color:var(--muted); font-size:12px; }
 .change-list { margin:8px 0 0; padding-left:20px; font-size:13px; }
 .change-list li { margin:4px 0; }
 .chart-box { width:100%; overflow:hidden; }
 .chart-box svg { width:100%; height:auto; display:block; }
 .chart-legend { display:flex; gap:14px; flex-wrap:wrap; font-size:12px; color:var(--muted); }
-.legend-dot { display:inline-block; width:9px; height:9px; border-radius:50%; margin-right:5px; }
+.legend-dot {
+  display:inline-block; width:9px; height:9px;
+  border-radius:50%; margin-right:5px;
+}
 small.hint { color:var(--muted); display:block; margin-top:7px; line-height:1.5; }
 footer { color:var(--muted); text-align:center; font-size:12px; padding:10px; }
+
+/* スマホ用カード一覧：PCでは非表示 */
+.user-cards { display:none; }
+.user-card {
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:14px;
+  margin-bottom:10px;
+  background:#fff;
+}
+.user-card:last-child { margin-bottom:0; }
+.user-card-top {
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:10px;
+}
+.user-card-name {
+  font-size:15px;
+  font-weight:700;
+  line-height:1.4;
+  overflow-wrap:anywhere;
+}
+.user-card-id {
+  font-size:12px;
+  margin-top:4px;
+  overflow-wrap:anywhere;
+}
+.user-card-info {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:9px;
+  margin-top:13px;
+  padding-top:12px;
+  border-top:1px solid var(--line);
+}
+.user-card-info .info-label {
+  color:var(--muted);
+  font-size:11px;
+  margin-bottom:3px;
+}
+.user-card-info .info-value {
+  font-size:13px;
+  overflow-wrap:anywhere;
+}
+.user-card-note {
+  margin-top:11px;
+  padding:10px;
+  background:#f7f8fc;
+  border-radius:8px;
+  font-size:12px;
+  line-height:1.6;
+  white-space:pre-wrap;
+  overflow-wrap:anywhere;
+}
+.user-card-actions {
+  display:flex;
+  gap:8px;
+  margin-top:12px;
+}
+.user-card-actions button {
+  flex:1;
+  padding:9px;
+}
+
 @media(max-width:650px) {
-  header { padding:13px 14px; }
-  .header-inner { align-items:flex-start; flex-direction:column; }
+  header { padding:11px 13px; }
+  .header-inner { align-items:flex-start; flex-direction:column; gap:8px; }
   .header-stats { justify-content:flex-start; gap:10px; }
   h1 { font-size:20px; }
-  main { padding:15px 10px 35px; }
-  .panel { padding:14px; }
+  .stat { font-size:13px; }
+  .updated { font-size:11px; }
+
+  nav {
+    display:flex;
+    width:100%;
+    gap:5px;
+    margin-top:8px;
+  }
+  nav button {
+    flex:1;
+    padding:10px 5px;
+    font-size:12px;
+    white-space:nowrap;
+  }
+
+  main { padding:12px 10px 35px; }
+  .panel { padding:13px; border-radius:12px; }
   .form-grid,.metrics { grid-template-columns:1fr; }
   .metric .value { font-size:20px; }
+
+  /* PC用テーブルを隠してカード表示に切り替え */
+  .desktop-users { display:none; }
+  .user-cards { display:block; }
+
+  #userSearchPanel .toolbar {
+    flex-direction:column;
+    align-items:stretch;
+  }
+  #searchInput,#relationshipFilter { width:100%; }
+  #userActionPanel .toolbar button { flex:1; }
+
+  .user-card-top { flex-direction:column; }
+  .user-card-top .tags { margin-top:2px; }
+  .user-card-info { grid-template-columns:1fr 1fr; }
+  .user-card-actions button { min-height:40px; }
+
+  .history-head { align-items:flex-start; }
+  .history-item .metrics { grid-template-columns:repeat(3,minmax(0,1fr)); }
+  .history-item .metric { padding:9px 7px; }
+  .history-item .metric .value { font-size:17px; }
+  .chart-box { overflow-x:auto; }
+  .chart-box svg { min-width:520px; }
 }
 </style>
 </head>
@@ -130,7 +247,7 @@ footer { color:var(--muted); text-align:center; font-size:12px; padding:10px; }
 
   <!-- ユーザー一覧 -->
   <section id="page-users" class="page active">
-    <div class="panel">
+    <div class="panel" id="userActionPanel">
       <div class="toolbar">
         <button class="primary" id="addUserBtn">＋ ユーザー登録</button>
         <button id="saveCsvBtn">CSV保存</button>
@@ -176,7 +293,7 @@ footer { color:var(--muted); text-align:center; font-size:12px; padding:10px; }
       </form>
     </div>
 
-    <div class="panel">
+    <div class="panel" id="userSearchPanel">
       <div class="toolbar">
         <input id="searchInput" type="text" placeholder="名前・nana ID・メモで検索" style="flex:1">
         <select id="relationshipFilter">
@@ -190,7 +307,8 @@ footer { color:var(--muted); text-align:center; font-size:12px; padding:10px; }
     </div>
 
     <div class="panel">
-      <div class="table-wrap">
+      <!-- PC用テーブル -->
+      <div class="table-wrap desktop-users">
         <table>
           <thead>
             <tr>
@@ -205,11 +323,15 @@ footer { color:var(--muted); text-align:center; font-size:12px; padding:10px; }
           <tbody id="usersTable"></tbody>
         </table>
       </div>
+
+      <!-- スマホ用カード -->
+      <div class="user-cards" id="usersCards"></div>
+
       <div class="empty" id="usersEmpty">ユーザーが登録されていません。</div>
     </div>
   </section>
 
-  <!-- メンテナンス：記録ボタン＋履歴一覧を統合 -->
+  <!-- メンテナンス -->
   <section id="page-maintenance" class="page">
     <div class="panel">
       <h2>メンテナンス記録</h2>
@@ -276,7 +398,6 @@ function loadUsers() {
   try {
     const parsed = JSON.parse(localStorage.getItem(STORAGE_USERS) || "[]");
     return parsed.map(u => {
-      // 旧形式 relationship を新形式のフラグに変換
       if (typeof u.isFollowing !== "boolean" || typeof u.isFollower !== "boolean") {
         const rel = u.relationship || "none";
         u.isFollowing = rel === "follow" || rel === "mutual";
@@ -336,7 +457,7 @@ function countsOf(list) {
 function relationTags(u) {
   const tags = [];
   if (u.isFollowing && u.isFollower) {
-    tags.push('<span class="tag mutual">相互</span>');
+    tags.push('<span class="tag mutual">相互フォロー</span>');
   } else {
     if (u.isFollowing) tags.push('<span class="tag follow">フォロー中</span>');
     if (u.isFollower) tags.push('<span class="tag follower">フォロワー</span>');
@@ -385,6 +506,7 @@ function renderUsers() {
     return true;
   });
 
+  // PC用テーブル
   $("usersTable").innerHTML = filtered.map(u => `
     <tr>
       <td>
@@ -402,6 +524,41 @@ function renderUsers() {
         </div>
       </td>
     </tr>
+  `).join("");
+
+  // スマホ用カード
+  $("usersCards").innerHTML = filtered.map(u => `
+    <article class="user-card">
+      <div class="user-card-top">
+        <div>
+          <div class="user-card-name">${escapeHTML(u.name || "（名前未設定）")}</div>
+          <div class="user-card-id">
+            <a href="${escapeHTML(profileUrl(u.nanaId))}" target="_blank" rel="noopener">
+              ${escapeHTML(u.nanaId)}
+            </a>
+          </div>
+        </div>
+        ${relationTags(u)}
+      </div>
+
+      <div class="user-card-info">
+        <div>
+          <div class="info-label">自分がフォローした日</div>
+          <div class="info-value">${escapeHTML(u.followedAt || "未設定")}</div>
+        </div>
+        <div>
+          <div class="info-label">相手がフォローしてきた日</div>
+          <div class="info-value">${escapeHTML(u.followerAt || "未設定")}</div>
+        </div>
+      </div>
+
+      ${u.note ? `<div class="user-card-note">${escapeHTML(u.note)}</div>` : ""}
+
+      <div class="user-card-actions">
+        <button data-edit="${escapeHTML(u.id)}">編集</button>
+        <button class="danger" data-delete="${escapeHTML(u.id)}">削除</button>
+      </div>
+    </article>
   `).join("");
 
   $("usersEmpty").hidden = filtered.length > 0;
@@ -438,10 +595,6 @@ function snapshotNow() {
   }));
 }
 
-/*
-  スナップショット間の差分を計算。
-  ユーザー一覧から削除されたことと、フォロー解除を区別する。
-*/
 function compareSnapshots(previousSnapshot, currentSnapshot) {
   const before = new Map((previousSnapshot || []).map(u => [u.nanaId,u]));
   const after = new Map((currentSnapshot || []).map(u => [u.nanaId,u]));
@@ -657,6 +810,7 @@ function openUserForm(user=null) {
   $("followerAt").value=user?.followerAt || "";
   $("userNote").value=user?.note || "";
   $("userFormPanel").hidden=false;
+  $("userFormPanel").scrollIntoView({behavior:"smooth",block:"start"});
   $("nanaId").focus();
 }
 
@@ -692,14 +846,21 @@ $("userForm").addEventListener("submit",event=>{
   saveUsers();
 });
 
-$("addUserBtn").addEventListener("click",()=>openUserForm());
+$("addUserBtn").addEventListener("click",()=>{
+  openUserForm();
+  $("userFormPanel").scrollIntoView({behavior:"smooth",block:"start"});
+});
 $("cancelUserBtn").addEventListener("click",resetUserForm);
 $("searchInput").addEventListener("input",renderUsers);
 $("relationshipFilter").addEventListener("change",renderUsers);
 
-$("usersTable").addEventListener("click",event=>{
-  const editId=event.target.dataset.edit;
-  const deleteId=event.target.dataset.delete;
+/* PCテーブル・スマホカード共通の編集／削除操作 */
+function handleUserAction(event) {
+  const button=event.target.closest("button");
+  if(!button) return;
+
+  const editId=button.dataset.edit;
+  const deleteId=button.dataset.delete;
 
   if(editId){
     const user=users.find(u=>u.id===editId);
@@ -715,7 +876,10 @@ $("usersTable").addEventListener("click",event=>{
       saveUsers();
     }
   }
-});
+}
+
+$("usersTable").addEventListener("click",handleUserAction);
+$("usersCards").addEventListener("click",handleUserAction);
 
 $("recordMaintenanceBtn").addEventListener("click",()=>{
   if(!confirm("現在のユーザー一覧をメンテナンス履歴として記録しますか？")) return;
@@ -730,7 +894,8 @@ $("recordMaintenanceBtn").addEventListener("click",()=>{
 });
 
 $("maintenanceHistoryList").addEventListener("click",event=>{
-  const id=event.target.dataset.deleteHistory;
+  const button=event.target.closest("[data-delete-history]");
+  const id=button?.dataset.deleteHistory;
   if(!id) return;
 
   if(!confirm("このメンテナンス履歴を削除しますか？")) return;
@@ -747,6 +912,8 @@ function showPage(page){
   document.querySelectorAll("nav button").forEach(b=>{
     b.classList.toggle("active",b.dataset.page===page);
   });
+
+  window.scrollTo({top:0,behavior:"smooth"});
 }
 document.querySelectorAll("nav button").forEach(button=>{
   button.addEventListener("click",()=>showPage(button.dataset.page));
@@ -801,10 +968,6 @@ async function saveCSV(){
   const filename=`nfm_${localFileTimestamp()}.csv`;
   const blob=new Blob([csv],{type:"text/csv;charset=utf-8;"});
 
-  /*
-    対応ブラウザでは保存先・ファイル名を指定できる。
-    非対応ブラウザでは通常のダウンロードにフォールバック。
-  */
   if(window.showSaveFilePicker){
     try{
       const handle=await window.showSaveFilePicker({
@@ -831,7 +994,7 @@ async function saveCSV(){
   document.body.appendChild(a);
   a.click();
   a.remove();
-  URL.revokeObjectURL(url);
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
 }
 
 function parseCSV(text){
